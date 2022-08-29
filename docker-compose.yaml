@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  postgresql:
+    container_name: calorie-postgresql
+    image: postgres:12
+    # this will log every SQL statement
+    # command: ['postgres', '-c', 'log_statement=all']
+    ports:
+      - '3001:5432'
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      # - DB_ANON_ROLE=${DB_ANON_ROLE}
+      # - DB_SCHEMA=${DB_SCHEMA}
+    restart: always
