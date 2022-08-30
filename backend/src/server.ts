@@ -1,11 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
-import { geRresolvers } from "./resolvers";
+import { getResolvers } from "./resolvers";
 import { typeDefs } from "./schema";
+import dotenv from 'dotenv';
+
+// Allows using .env file
+// These values then can be used as process.env[variablename]
+dotenv.config();
 
 const prisma = new PrismaClient();
 
-const server = new ApolloServer({ typeDefs, resolvers: geRresolvers(prisma) });
+const server = new ApolloServer({ typeDefs, resolvers: getResolvers(prisma) });
 
 server.listen().then(() => {
   console.log(`
