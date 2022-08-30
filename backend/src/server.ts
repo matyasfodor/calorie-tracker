@@ -1,8 +1,11 @@
+import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server";
-import { resolvers } from "./resolvers";
+import { geRresolvers } from "./resolvers";
 import { typeDefs } from "./schema";
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const prisma = new PrismaClient();
+
+const server = new ApolloServer({ typeDefs, resolvers: geRresolvers(prisma) });
 
 server.listen().then(() => {
   console.log(`
