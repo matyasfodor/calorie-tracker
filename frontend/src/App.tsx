@@ -4,6 +4,7 @@ import { Content, Footer, Header } from 'antd/lib/layout/layout';
 import Sider from 'antd/lib/layout/Sider';
 import "antd/dist/antd.min.css";
 import { Menu } from './components/Menu';
+import { MainContent } from './pages/MainContent';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
         <Header>Header</Header>
         <Layout>
           <Sider><Menu/></Sider>
-          <Content>Content</Content>
+          <Content><MainContent/></Content>
         </Layout>
         {/* <Footer>Footer</Footer> */}
       </Layout>
