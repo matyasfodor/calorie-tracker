@@ -17,14 +17,9 @@ export const getResolvers = (prisma: PrismaClient) => ({
           throw new AuthenticationError('User cannot modify ')
         }
       }
-      // TODO Do not allow creating / updating entries for non-admin users.
-      console.log('Context: ', context);
-      console.log(`createOrUpdateEntry args: ${JSON.stringify(entry, null, 2)} ${ownerId}`);
       if (entry.id !== undefined) {
-        console.log('update');
         return await prisma.entry.update({ where: { id: entry.id }, data: entry })
       } else {
-        console.log('create');
         return await prisma.entry.create({ data: { ...entry, ownerId: (ownerId ?? context.user?.id) as number } })
       }
     }

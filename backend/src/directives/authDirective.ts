@@ -21,7 +21,6 @@ function getAuthDirective(directiveName: string) {
     authDirectiveTransformer: (schema: GraphQLSchema) =>
       mapSchema(schema, {
         [MapperKind.TYPE]: type => {
-          // console.log('### MApper kind. type', type, getDirective(schema, type, directiveName));
           const authDirective = getDirective(schema, type, directiveName)?.[0]
           if (authDirective) {
             typeDirectiveArgumentMaps[type.name] = authDirective

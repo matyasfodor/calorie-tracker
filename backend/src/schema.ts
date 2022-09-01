@@ -6,7 +6,7 @@ export const typeDefs = gql`
   scalar Date
 
   type Entry {
-    id: ID!
+    id: Int!
     timestamp: Date!
     name: String!
     calorieValue: Int!
@@ -14,7 +14,7 @@ export const typeDefs = gql`
   }
 
   type User {
-    id: ID!
+    id: Int!
     name: String!
     jwt: String!
   }
@@ -34,7 +34,7 @@ export const typeDefs = gql`
   }
 
   input CreateOrUpdateEntry {
-    id: ID
+    id: Int
     timestamp: Date!
     name: String!
     calorieValue: Int!
@@ -42,6 +42,6 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createOrUpdateEntry(entry: CreateOrUpdateEntry!, ownerId: ID): Entry @auth(requires: USER)
+    createOrUpdateEntry(entry: CreateOrUpdateEntry!, ownerId: Int): Entry @auth(requires: USER)
   }
 `;
