@@ -10,6 +10,9 @@ export const getResolvers = (prisma: PrismaClient) => ({
   Query: {
     users: async () => {
       return prisma.user.findMany();
+    },
+    entries: async () => {
+      return prisma.entry.findMany()
     }
   },
 

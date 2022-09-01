@@ -1,9 +1,12 @@
 import { PrismaClient, User } from "@prisma/client";
-import { ApolloServer, AuthenticationError } from "apollo-server";
+import { ApolloServer } from "apollo-server";
 import { getResolvers } from "./resolvers";
 import { typeDefs } from "./schema";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+
+import {makeExecutableSchema} from '@graphql-tools/schema';
+import { authDirective } from "./directives/authDirective";
 
 // Allows using .env file
 // These values then can be used as process.env[variablename]
@@ -21,9 +24,19 @@ const getUser = (authHeader: string): User | null => {
   }
 }
 
-const server = new ApolloServer({
-  typeDefs,
+const { authDirectiveTypeDefs, authDirectiveTransformer } = authDirective;
+
+const schema = authDirectiveTransformer(makeExecutableSchema({
+  typeDefs: [
+    authDirectiveTypeDefs,
+    typeDefs,
+  ],
   resolvers: getResolvers(prisma),
+}));
+
+const server = new ApolloServer({
+  // typeDefs,
+  schema,
   context: ({ req }) => {
     const token = req.headers.authorization || '';
 
@@ -37,7 +50,7 @@ const server = new ApolloServer({
       user,
       isAdmin: user.isAdmin
     };
-  }
+  },
 });
 
 server.listen().then(() => {
