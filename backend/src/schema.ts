@@ -1,4 +1,4 @@
-import {gql} from 'apollo-server';
+import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
   directive @fieldAuth(requires: Role = ADMIN) on FIELD_DEFINITION
@@ -17,6 +17,10 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     jwt: String!
+  }
+
+  type Self {
+    user: User!
     entries: [Entry!]!
   }
 
@@ -24,8 +28,20 @@ export const typeDefs = gql`
     """Lists all users. Normally this endpoint would be guarded by @auth(requires: ADMIN),
     but this resolver populates the user selector in the client"""
     users: [User!]!
-    self: User!
+    self: Self!
     # TODO: filter by dates, user, add pagination
     entries: [Entry!]! @auth(requires: ADMIN)
+  }
+
+  input CreateOrUpdateEntry {
+    id: ID
+    timestamp: Date!
+    name: String!
+    calorieValue: Int!
+    cheatMeal: Boolean
+  }
+
+  type Mutation {
+    createOrUpdateEntry(entry: CreateOrUpdateEntry!, ownerId: ID): Entry @auth(requires: USER)
   }
 `;

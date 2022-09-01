@@ -15,7 +15,7 @@ model Entry {
   timestamp    DateTime
   name         String
   calorieValue Int      @map("calorie_value")
-  cheatMeal    Boolean  @map("cheat_meal")
+  cheatMeal    Boolean  @map("cheat_meal") @default(false)
   owner        User     @relation(fields: [ownerId], references: [id])
   ownerId      Int
 }
