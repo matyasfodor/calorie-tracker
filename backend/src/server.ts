@@ -11,29 +11,34 @@ dotenv.config();
 
 const prisma = new PrismaClient();
 
-const getUser = (authHeader: string): User => {
-  if (authHeader.startsWith("Bearer ")){
+const getUser = (authHeader: string): User | null => {
+  if (authHeader.startsWith("Bearer ")) {
     const token = authHeader.substring(7, authHeader.length);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as User;
-    return decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {user: User};
+    return decoded.user;
   } else {
-    throw new AuthenticationError("User could not be authorised");
+    return null
   }
 }
 
 const server = new ApolloServer({
   typeDefs,
   resolvers: getResolvers(prisma),
-  context: ({req}) => {
+  context: ({ req }) => {
     const token = req.headers.authorization || '';
 
     const user = getUser(token);
+
+    if (user === null) {
+      return null
+    }
 
     return {
       user,
       isAdmin: user.isAdmin
     };
-} });
+  }
+});
 
 server.listen().then(() => {
   console.log(`

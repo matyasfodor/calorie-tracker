@@ -1,10 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from "react-router-dom";
+import { ApolloProvider } from '@apollo/client';
 
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { apolloClient } from './apolloClient';
+import { AuthContextProvider } from './contexts/AuthContext';
 
 
 const root = ReactDOM.createRoot(
@@ -12,9 +15,13 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ApolloProvider client={apolloClient}>
+      <BrowserRouter>
+        <AuthContextProvider>
+          <App />
+        </AuthContextProvider>
+      </BrowserRouter>
+    </ApolloProvider>
   </React.StrictMode>
 );
 
