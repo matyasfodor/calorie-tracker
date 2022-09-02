@@ -15,14 +15,24 @@ model Entry {
   timestamp    DateTime
   name         String
   calorieValue Int      @map("calorie_value")
-  cheatMeal    Boolean  @map("cheat_meal") @default(false)
+  cheatMeal    Boolean  @default(false) @map("cheat_meal")
   owner        User     @relation(fields: [ownerId], references: [id])
   ownerId      Int
 }
 
 model User {
-  id      Int     @id @default(autoincrement())
+  id      Int      @id @default(autoincrement())
   name    String
-  isAdmin Boolean @map("is_admin")
+  isAdmin Boolean  @map("is_admin")
+  profile Profile?
   entries Entry[]
+}
+
+model Profile {
+  id           Int @id @default(autoincrement())
+  calorieLimit Int @default(2100) @map("calorie_limit")
+  timeZone     String?
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 }
