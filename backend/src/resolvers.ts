@@ -32,7 +32,16 @@ export const getResolvers = (prisma: PrismaClient) => ({
     },
     entries: async () => {
       return prisma.entry.findMany()
-    }
+    },
+    self: () => {
+      return {};
+    },
+    // self: async (_: unknown, {}, context: ContextType) => {
+    //   return: {
+    //     user: context.user
+
+    //   }
+    // }
   },
 
   User: {
@@ -40,4 +49,13 @@ export const getResolvers = (prisma: PrismaClient) => ({
       return jwt.sign({ user }, process.env.JWT_SECRET as string);
     }
   },
+
+  Self: {
+    user: (_: unknown, { }, context: ContextType) => {
+      return context.user;
+    },
+    entries: async (_: unknown, { }, context: ContextType) => {
+      return prisma.entry.findMany({ where: { ownerId: { equals: context?.user?.id } } })
+    },
+  }
 });

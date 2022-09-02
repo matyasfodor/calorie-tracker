@@ -13,7 +13,7 @@ function getItem(
 }
 
 const routes = [
-  {path: "/invoices", title: "Invoices"},
+  {path: "/food-entries", title: "Food Entries"},
   {path: "/expenses", title: "Expenses"},
 ]
 
