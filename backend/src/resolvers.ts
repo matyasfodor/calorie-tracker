@@ -57,11 +57,24 @@ export const getResolvers = (prisma: PrismaClient) => ({
     user: (_: unknown, { }, context: ContextType) => {
       return context.user;
     },
-    entries: async (_: unknown, { }, context: ContextType) => {
-      return prisma.entry.findMany({ where: { ownerId: { equals: context?.user?.id } } })
+    entries: async (_: unknown, { from, to, limit, offset }: { from: Date, to: Date, limit: number, offset: number }, context: ContextType) => {
+      return prisma.entry.findMany({
+        where: {
+          AND: [
+            { ownerId: { equals: context?.user?.id } },
+            {
+              timestamp: { gte: from }
+            },
+            {
+              timestamp: { lte: to }
+            }
+          ]
+        },
+        take: limit,
+        skip: offset,
+      })
     },
     caloriesPerDay: async (_: unknown, { from, to }: { from: Date, to: Date }, context: ContextType): Promise<CaloriesPerDay> => {
-      // return prisma.
       const entries = await prisma.entry.findMany({
         where: {
           AND: [
