@@ -7,7 +7,7 @@ export const dateScalar = new GraphQLScalarType({
 
   serialize(value) {
     // @ts-ignore
-    return value.getTime(); // Convert outgoing Date to integer for JSON
+    return value.toJSON(); // Convert outgoing Date to integer for JSON
   },
 
   parseValue(value: unknown) {

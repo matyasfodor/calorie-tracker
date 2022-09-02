@@ -14,9 +14,10 @@ export const getResolvers = (prisma: PrismaClient) => ({
     createOrUpdateEntry: async (_: unknown, { entry, ownerId }: { entry: Entry, ownerId?: number }, context: ContextType): Promise<Entry> => {
       if (!isNil(ownerId)) {
         if (!context.isAdmin) {
-          throw new AuthenticationError('User cannot modify ')
+          throw new AuthenticationError(`User cannot modify other users's records`)
         }
       }
+      // TODO validate that the record belongs to the user
       if (entry.id !== undefined) {
         return await prisma.entry.update({ where: { id: entry.id }, data: entry })
       } else {

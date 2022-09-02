@@ -21,7 +21,7 @@ export const typeDefs = gql`
 
   type Self {
     user: User!
-    entries: [Entry!]!
+    entries(from: Date, to: Date, limit: Int, offset: Int): [Entry!]!
   }
 
   type Query {
@@ -30,7 +30,7 @@ export const typeDefs = gql`
     users: [User!]!
     self: Self!
     # TODO: filter by dates, user, add pagination
-    entries: [Entry!]! @auth(requires: ADMIN)
+    entries(ownerId: Int, from: Date, to: Date, limit: Int, offset: Int): [Entry!]! @auth(requires: ADMIN)
   }
 
   input CreateOrUpdateEntry {
