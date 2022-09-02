@@ -13,15 +13,27 @@ export const typeDefs = gql`
     cheatMeal: Boolean!
   }
 
+  type DailyCalorie {
+    date: String!
+    calories: Int!
+  }
+
+  type Profile {
+    calorieLimit: Int!
+    timeZone: String
+  }
+
   type User {
     id: Int!
     name: String!
     jwt: String!
+    profile: Profile!
   }
 
   type Self {
     user: User!
     entries(from: Date, to: Date, limit: Int, offset: Int): [Entry!]!
+    caloriesPerDay(from: Date, to: Date): [DailyCalorie!]!
   }
 
   type Query {

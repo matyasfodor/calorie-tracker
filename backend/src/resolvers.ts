@@ -1,11 +1,17 @@
 import { Entry, PrismaClient, User } from "@prisma/client";
 import { AuthenticationError } from "apollo-server";
+import dayjs from "dayjs";
 import jwt from 'jsonwebtoken';
 import isNil from 'lodash.isnil';
 
 
 import { ContextType } from "./context";
 import { dateScalar } from "./scalars";
+
+type CaloriesPerDay = {
+  date: string;
+  calories: number;
+}[]
 
 export const getResolvers = (prisma: PrismaClient) => ({
   Date: dateScalar,
@@ -36,17 +42,14 @@ export const getResolvers = (prisma: PrismaClient) => ({
     self: () => {
       return {};
     },
-    // self: async (_: unknown, {}, context: ContextType) => {
-    //   return: {
-    //     user: context.user
-
-    //   }
-    // }
   },
 
   User: {
     jwt: async (user: User) => {
       return jwt.sign({ user }, process.env.JWT_SECRET as string);
+    },
+    profile: async (user: User) => {
+      return prisma.profile.findUnique({ where: { userId: user.id } })
     }
   },
 
@@ -57,5 +60,37 @@ export const getResolvers = (prisma: PrismaClient) => ({
     entries: async (_: unknown, { }, context: ContextType) => {
       return prisma.entry.findMany({ where: { ownerId: { equals: context?.user?.id } } })
     },
+    caloriesPerDay: async (_: unknown, { from, to }: { from: Date, to: Date }, context: ContextType): Promise<CaloriesPerDay> => {
+      // return prisma.
+      const entries = await prisma.entry.findMany({
+        where: {
+          AND: [
+            {
+              ownerId: { equals: context?.user?.id }
+            },
+            {
+              timestamp: { gte: from }
+            },
+            {
+              timestamp: { lte: to }
+            }
+          ]
+        }
+      });
+
+      const caloriesByDay: Record<string, number> = entries.reduce((acc, entry: Entry) => {
+        // TODO test if the aggregation works
+        const date = dayjs(entry.timestamp).utc(true).local().tz('America/Detroit').format('YYYY-MM-DD');
+        acc[date] = (acc[date] || 0) + entry.calorieValue;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const aggregatedEntries: CaloriesPerDay = Object.entries(caloriesByDay).map(([date, calories]) => ({
+        date,
+        calories,
+      }))
+
+      return aggregatedEntries;
+    }
   }
 });
