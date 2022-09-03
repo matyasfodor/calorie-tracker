@@ -49,7 +49,7 @@ const GET_USER_FOOD_ENTRIES = gql`
   }
 `;
 
-export const useGetUserFoodEntries = () => useQuery<{ self: { entries: {items: FoodEntry[]} } }>(GET_USER_FOOD_ENTRIES);
+export const useGetUserFoodEntries = () => useQuery<{ self: { entries: { items: FoodEntry[] } } }>(GET_USER_FOOD_ENTRIES);
 
 const GET_ENTRY_COUNT = gql`
   query entryCount($from: Date, $to: Date) {
@@ -72,4 +72,19 @@ const GET_USER_CALORIES_BY_DAY = gql`
   }
 `;
 
-export const useGetUserCaloriesByDay = (variables={}) => useQuery<{self: {caloriesPerDay: {calories: number, date: string}[]}}>(GET_USER_CALORIES_BY_DAY, {variables});
+export const useGetUserCaloriesByDay = (variables = {}) => useQuery<{ self: { caloriesPerDay: { calories: number, date: string }[] } }>(GET_USER_CALORIES_BY_DAY, { variables });
+
+const GET_ALL_USER_CALORIES_BY_DAY = gql`
+  query getAllUserCaloriesByDay($from: Date, $to: Date) {
+    users {
+        id
+        name
+        caloriesPerDay(from: $from, to: $to) {
+          calories
+          date
+      }
+    }
+  }
+`;
+
+export const useGetAllUserCaloriesByDay = (variables = {}) => useQuery<{ users: { id: string, name: string, caloriesPerDay: { calories: number, date: string }[] }[] }>(GET_ALL_USER_CALORIES_BY_DAY, { variables });
