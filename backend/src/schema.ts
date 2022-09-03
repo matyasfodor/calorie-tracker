@@ -35,6 +35,7 @@ export const typeDefs = gql`
     id: Int!
     name: String!
     jwt: String!
+    isAdmin: Boolean!
     profile: Profile!
   }
 

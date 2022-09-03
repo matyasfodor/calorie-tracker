@@ -1,6 +1,8 @@
 import AntMenu from 'antd/lib/menu';
 import { MenuItemType } from 'antd/lib/menu/hooks/useItems';
+import { useContext } from 'react';
 import { Link, matchRoutes, useLocation } from 'react-router-dom';
+import { AuthContext, AuthContextType } from '../contexts/AuthContext';
 
 function getItem(
   component: React.ReactNode,
@@ -12,12 +14,22 @@ function getItem(
   };
 }
 
-const routes = [
-  {path: "/food-entries", title: "My Food Entries"},
-  {path: "/admin-entries", title: "[Admin] Food Entries"},
-]
+const getRoutes = (isAdmin: boolean) => {
+  const adminRoutes = [
+    {path: "/admin-entries", title: "[Admin] Food Entries"},
+  ]
+
+  return [
+    {path: "/food-entries", title: "My Food Entries"},
+    ...(isAdmin ? adminRoutes: []),
+  ];
+}
 
 export const Menu = () => {
+  const { user } = useContext(AuthContext) as AuthContextType;
+
+  const routes = getRoutes(user?.isAdmin ?? false);
+
   const items = routes.map(({path, title}) => getItem(<Link to={path}>{title}</Link>, path),)
 
   const useCurrentPath = () => {

@@ -15,6 +15,7 @@ const GET_USERS = gql`
       id
       name
       jwt
+      isAdmin
     }
   }
 `;

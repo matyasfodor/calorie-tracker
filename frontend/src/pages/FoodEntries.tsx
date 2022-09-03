@@ -65,7 +65,6 @@ const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDa
 }
 
 export const FoodEntries = () => {
-  // { loading, error, data }
   const getEntries = useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
   const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
 

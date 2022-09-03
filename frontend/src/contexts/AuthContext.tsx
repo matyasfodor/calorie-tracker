@@ -4,7 +4,7 @@ import jwtDecode from "jwt-decode";
 import { LOCAL_STORAGE__AUTH } from "../consts";
 
 export interface User {
-  id: string, name: string, jwt: string
+  id: string, name: string, jwt: string, isAdmin: boolean
 }
 
 export type AuthContextType = { user: User | null; setUser: (user: User | null) => void; };
@@ -20,8 +20,6 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const token = localStorage.getItem(LOCAL_STORAGE__AUTH);
-
-
 
   const [user, setUserState] = useState<User | null>(token !== null ? getUserFromJwt(token) : null);
   const setUser = (user: User | null) => {
