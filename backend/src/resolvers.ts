@@ -18,19 +18,54 @@ export const getResolvers = (prisma: PrismaClient) => ({
   Date: dateScalar,
 
   Mutation: {
-    createOrUpdateEntry: async (_: unknown, { entry, ownerId }: { entry: Entry, ownerId?: number }, context: ContextType): Promise<Entry> => {
-      if (!isNil(ownerId)) {
-        if (!context.isAdmin) {
-          throw new AuthenticationError(`User cannot modify other users's records`)
-        }
+    // createEntry(entry: CreateOrUpdateEntry!, ownerId: Int): Entry @auth(requires: USER)
+    createEntry: async (_: unknown, { entry, ownerId }: { entry: Entry, ownerId: number }, context: ContextType): Promise<Entry> => {
+      if (!context.isAdmin && !isNil(ownerId)) {
+        throw new AuthenticationError(`Only admins can modify other users's records`);
       }
-      // TODO validate that the record belongs to the user
-      if (entry.id !== undefined) {
-        return await prisma.entry.update({ where: { id: entry.id }, data: entry })
-      } else {
-        return await prisma.entry.create({ data: { ...entry, ownerId: (ownerId ?? context.user?.id) as number } })
+      return await prisma.entry.create({ data: { ...entry, ownerId: (ownerId ?? context.user?.id) as number } });
+    },
+    // setCheatMeal(entryId: Int, cheatMeal: Boolean): Entry @auth(requires: USER)
+
+    setCheatMeal: async (_: unknown, { entryId, cheatMeal }: { entryId: number, cheatMeal: boolean }, context: ContextType): Promise<Entry> => {
+      const entry = await prisma.entry.findUnique({ where: { id: entryId } });
+      if (entry?.ownerId !== context.user?.id) {
+        throw new AuthenticationError(`Food entry with id ${entryId} does not exists`);
       }
-    }
+      const updatedEntry = await prisma.entry.update({ where: { id: entryId }, data: { cheatMeal } });
+      return updatedEntry;
+    },
+
+    // updateEntry(entry: CreateOrUpdateEntry!, entryId: Int): Entry @auth(requires: ADMIN)
+    updateEntry: async (_: unknown, { entry, entryId }: { entry: Entry, entryId: number }): Promise<Entry> => {
+      const updatedEntry = await prisma.entry.update({ where: { id: entryId }, data: entry });
+      return updatedEntry;
+    },
+    // deleteEntry(entryId: Int!): Boolean @auth(requires: ADMIN)
+    deleteEntry: async (_: unknown, { entryId }: { entryId: number }): Promise<boolean> => {
+      // TODO verify this works
+      try {
+        const resp = await prisma.entry.delete({ where: { id: entryId } });
+        return true
+      } catch(error) {
+        console.warn(error);
+        return false
+      }
+    },
+
+    // createOrUpdateEntry: async (_: unknown, { entry, ownerId }: { entry: Entry, ownerId?: number }, context: ContextType): Promise<Entry> => {
+    //   if (!isNil(ownerId)) {
+    //     if (!context.isAdmin) {
+    //       throw new AuthenticationError(`User cannot modify other users's records`)
+    //     }
+    //   }
+    //   // TODO validate that the record belongs to the user
+    //   if (entry.id !== undefined) {
+    //     return await prisma.entry.update({ where: { id: entry.id }, data: entry })
+    //   } else {
+    //     return await prisma.entry.create({ data: { ...entry, ownerId: (ownerId ?? context.user?.id) as number } })
+    //   }
+    // }
   },
 
   Query: {
@@ -65,6 +100,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
       const caloriesByDay: Record<string, number> = entries.reduce((acc, entry: Entry) => {
         // TODO test if the aggregation works
         // Get user's timezone or default to GMT
+        // @ts-ignore
         const date = dayjs(entry.timestamp).utc(true).local().tz('America/Detroit').format('YYYY-MM-DD');
         acc[date] = (acc[date] || 0) + entry.calorieValue;
         return acc;

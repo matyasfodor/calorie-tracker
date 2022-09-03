@@ -63,6 +63,10 @@ export const typeDefs = gql`
     # create entry - all authed users
     # change cheat day status - all authed users
     # update / delete entries - admin
-    createOrUpdateEntry(entry: CreateOrUpdateEntry!, ownerId: Int): Entry @auth(requires: USER)
+    createEntry(entry: CreateOrUpdateEntry!, ownerId: Int): Entry @auth(requires: USER)
+    setCheatMeal(entryId: Int, cheatMeal: Boolean): Entry @auth(requires: USER)
+
+    updateEntry(entry: CreateOrUpdateEntry!, entryId: Int): Entry @auth(requires: ADMIN)
+    deleteEntry(entryId: Int!): Boolean @auth(requires: ADMIN)
   }
 `;
