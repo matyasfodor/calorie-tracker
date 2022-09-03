@@ -10,6 +10,13 @@ import { apolloClient } from './apolloClient';
 import { AuthContextProvider } from './contexts/AuthContext';
 
 
+import dayjs_plugin_timezone from 'dayjs/plugin/timezone';
+import dayjs_plugin_utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+
+dayjs.extend(dayjs_plugin_utc)
+dayjs.extend(dayjs_plugin_timezone)
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
