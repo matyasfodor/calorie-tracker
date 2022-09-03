@@ -11,6 +11,7 @@ export const typeDefs = gql`
     name: String!
     calorieValue: Int!
     cheatMeal: Boolean!
+    owner: User!
   }
 
   type EntriesResponse {
@@ -66,7 +67,7 @@ export const typeDefs = gql`
     createEntry(entry: CreateOrUpdateEntry!, ownerId: Int): Entry @auth(requires: USER)
     setCheatMeal(entryId: Int, cheatMeal: Boolean): Entry @auth(requires: USER)
 
-    updateEntry(entry: CreateOrUpdateEntry!, entryId: Int): Entry @auth(requires: ADMIN)
+    updateEntry(entry: CreateOrUpdateEntry!, entryId: Int!): Entry @auth(requires: ADMIN)
     deleteEntry(entryId: Int!): Boolean @auth(requires: ADMIN)
   }
 `;

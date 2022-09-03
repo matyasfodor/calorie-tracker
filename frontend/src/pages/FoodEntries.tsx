@@ -1,19 +1,14 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import { Button, Checkbox, Form, Input, InputNumber, Modal, Spin, Table } from "antd";
+import { gql, useQuery } from "@apollo/client";
+import { Button, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table/interface";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { useCreateFoodEntry } from "../apollo/mutations";
+import { FoodEntry } from "../common/types";
 import Calendar from "../components/Calendar";
-import DatePicker from "../components/DatePicker";
-import TimePicker from "../components/TimePicker";
+import { EntryModal } from "../components/EntryModal";
 
-type FoodEntry = {
-  id: number;
-  name: string;
-  calorieValue: number;
-  cheatMeal: boolean;
-  timestamp: string;
-}
+
 
 const GET_USER_FOOD_ENTRIES = gql`
   query getUserFoodEntries {
@@ -29,35 +24,23 @@ const GET_USER_FOOD_ENTRIES = gql`
   }
 `;
 
-
-const CREATE_FOOD_ENTRY = gql`
-  mutation CreateEntry($entry: CreateOrUpdateEntry!) {
-    createEntry(entry: $entry) {
-      name
-      id
-      calorieValue
-      timestamp
-    }
-  }
-`
-
 const columns: ColumnsType<FoodEntry | {}> = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name'
-}, {
-  title: 'Calorie Value',
-  dataIndex: 'calorieValue',
-  key: 'calorieValue'
-}, {
-  title: 'Is cheat meal',
-  dataIndex: 'cheatMeal',
-  key: 'cheatMeal'
-}, {
-  title: 'Date',
-  dataIndex: 'timestamp',
-  key: 'timestamp'
-}
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name'
+  }, {
+    title: 'Calorie Value',
+    dataIndex: 'calorieValue',
+    key: 'calorieValue'
+  }, {
+    title: 'Is cheat meal',
+    dataIndex: 'cheatMeal',
+    key: 'cheatMeal'
+  }, {
+    title: 'Date',
+    dataIndex: 'timestamp',
+    key: 'timestamp'
+  }
 ];
 
 const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDay: Record<string, number> }) => {
@@ -81,119 +64,16 @@ const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDa
   )
 }
 
-type FormData = {
-  calorieValue: number;
-  cheatMeal: boolean
-  name: string;
-  timestampDate: dayjs.Dayjs;
-  timestampTime: dayjs.Dayjs;
-}
-
-const TableFooter = () => {
-  const [form] = Form.useForm();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const [createFoodEntry, { data, loading, error }] = useMutation(CREATE_FOOD_ENTRY);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  }
-
-  const handleOk = async () => {
-    try {
-      const {
-        timestampDate,
-        timestampTime,
-        ...restValues
-      }: FormData = await form.validateFields();
-      const timestamp = dayjs(new Date(
-        timestampDate.year(), timestampDate.month(), timestampDate.date(),
-        timestampTime.hour(), timestampTime.minute(), timestampTime.second()
-        // @ts-ignore
-      )).utc('z').format();
-      const foodEntry = {
-        timestamp,
-        ...restValues,
-      };
-      await createFoodEntry({variables: {entry: foodEntry}});
-      form.resetFields();
-      setIsModalVisible(false);
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const handleCancel = () => {
-    form.resetFields();
-    setIsModalVisible(false);
-  }
-
-  return (
-    <>
-      <Button onClick={showModal}>Add Entry</Button>
-
-      <Modal
-        title="Create food entry"
-        visible={isModalVisible}
-        okText="Create"
-        onOk={handleOk}
-        okButtonProps={{ disabled: loading }}
-        onCancel={handleCancel}
-      >
-        <Form
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 12 }}
-          form={form}
-        >
-          <Form.Item
-            label="Date"
-            name="timestampDate"
-            rules={[{ required: true, message: 'Please select the date the meal was eaten' }]}
-          >
-            <DatePicker />
-          </Form.Item>
-          <Form.Item
-            label="Time"
-            name="timestampTime"
-            rules={[{ required: true, message: 'Please select the time the meal was eaten' }]}
-          >
-            <TimePicker />
-          </Form.Item>
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: 'Please provide the name of your meal' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Calories"
-            name="calorieValue"
-            rules={[{ required: true, message: 'Please provide the number of calories' }]}
-          >
-            {/* TODO numeric input */}
-            <InputNumber min={0} controls={false} />
-          </Form.Item>
-          <Form.Item
-            label="Cheat meal"
-            name="cheatMeal"
-            valuePropName="checked"
-          >
-            <Checkbox />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
-  )
-}
-
 export const FoodEntries = () => {
-  const { loading, error, data } = useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
+  // { loading, error, data }
+  const getEntries = useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
+  const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
+
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    if (data) {
-      const caloriesByDay: Record<string, number> = data.self.entries.reduce((acc, entry: FoodEntry) => {
+    if (getEntries.data) {
+      const caloriesByDay: Record<string, number> = getEntries.data.self.entries.reduce((acc, entry: FoodEntry) => {
         const date = dayjs(entry.timestamp).format('YYYY-MM-DD');
         acc[date] = (acc[date] || 0) + entry.calorieValue;
         return acc;
@@ -201,14 +81,14 @@ export const FoodEntries = () => {
       setCaloriesByDay(caloriesByDay);
     }
 
-  }, [data]);
+  }, [getEntries.data]);
 
-  if (loading) {
+  if (getEntries.loading) {
     return (<Spin />)
   }
 
-  if (!data || error) {
-    return (<span>Error :( {error?.message}</span>);
+  if (!getEntries.data || getEntries.error) {
+    return (<span>Error :( {getEntries.error?.message}</span>);
   }
 
   return (
@@ -218,6 +98,13 @@ export const FoodEntries = () => {
           <CellRenderer date={date} caloriesByDay={caloriesByDay} />
         } />
       </div>
-      <Table dataSource={data.self.entries} columns={columns} footer={() => <TableFooter />} />;
+      <Table dataSource={getEntries.data.self.entries} columns={columns} footer={() => 
+        <EntryModal
+          title="Create food entry"
+          okText="Create"
+          loading={createFoodEntryState.loading}
+          buttonRenderer={({showModal}) => <Button onClick={showModal}>Add Entry</Button>}
+          onSubmit={(entry) => {createFoodEntry({variables: {entry}})}}
+          />} />;
     </div>);
 }

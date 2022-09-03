@@ -13,8 +13,8 @@ function getItem(
 }
 
 const routes = [
-  {path: "/food-entries", title: "Food Entries"},
-  {path: "/expenses", title: "Expenses"},
+  {path: "/food-entries", title: "My Food Entries"},
+  {path: "/admin-entries", title: "[Admin] Food Entries"},
 ]
 
 export const Menu = () => {

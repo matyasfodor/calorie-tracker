@@ -87,6 +87,12 @@ export const getResolvers = (prisma: PrismaClient) => ({
     }
   },
 
+  Entry: {
+    owner: async (entry: Entry) => {
+      return prisma.user.findUnique({where:{id: entry.ownerId}});
+    },
+  },
+
   Self: {
     user: (_: unknown, { }, context: ContextType) => {
       return context.user;
