@@ -56,7 +56,7 @@ export const FoodEntries = () => {
 
   useEffect(() => {
     if (getEntries.data) {
-      const caloriesByDay: Record<string, number> = getEntries.data.self.entries.reduce((acc, entry: FoodEntry) => {
+      const caloriesByDay: Record<string, number> = getEntries.data.self.entries.items.reduce((acc, entry: FoodEntry) => {
         const date = dayjs(entry.timestamp).format('YYYY-MM-DD');
         acc[date] = (acc[date] || 0) + entry.calorieValue;
         return acc;
@@ -81,7 +81,7 @@ export const FoodEntries = () => {
           <CellRenderer date={date} caloriesByDay={caloriesByDay} />
         } />
       </div>
-      <Table dataSource={getEntries.data.self.entries} columns={columns} footer={() => 
+      <Table dataSource={getEntries.data.self.entries.items} columns={columns} footer={() => 
         <EntryModal
           title="Create food entry"
           okText="Create"

@@ -37,17 +37,19 @@ const GET_USER_FOOD_ENTRIES = gql`
   query getUserFoodEntries {
     self {
       entries {
-        id
-        name
-        calorieValue
-        cheatMeal
-        timestamp
+        items {
+          id
+          name
+          calorieValue
+          cheatMeal
+          timestamp
+        }
       }
     }
   }
 `;
 
-export const useGetUserFoodEntries = () => useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
+export const useGetUserFoodEntries = () => useQuery<{ self: { entries: {items: FoodEntry[]} } }>(GET_USER_FOOD_ENTRIES);
 
 const GET_ENTRY_COUNT = gql`
   query entryCount($from: Date, $to: Date) {
@@ -57,4 +59,4 @@ const GET_ENTRY_COUNT = gql`
   }
 `;
 
-export const useGetEntryCount = (variables={}) => useQuery<{ entries: { count: number } }>(GET_ENTRY_COUNT, {variables});
+export const useGetEntryCount = (variables = {}) => useQuery<{ entries: { count: number } }>(GET_ENTRY_COUNT, { variables });

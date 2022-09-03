@@ -84,24 +84,12 @@ export const getResolvers = (prisma: PrismaClient) => ({
     },
     profile: async (user: User) => {
       return prisma.profile.findUnique({ where: { userId: user.id } })
-    }
-  },
-
-  Entry: {
-    owner: async (entry: Entry) => {
-      return prisma.user.findUnique({where:{id: entry.ownerId}});
     },
-  },
-
-  Self: {
-    user: (_: unknown, { }, context: ContextType) => {
-      return context.user;
+    entries: async (user: User, { from, to, limit, offset }: { from: Date, to: Date, limit: number, offset: number }) => {
+      return getEntries({ prisma }, { ownerId: user.id, from, to, limit, offset });
     },
-    entries: async (_: unknown, { from, to, limit, offset }: { from: Date, to: Date, limit: number, offset: number }, context: ContextType) => {
-      return getEntries({ prisma }, { ownerId: context.user?.id, from, to, limit, offset });
-    },
-    caloriesPerDay: async (_: unknown, { from, to }: { from: Date, to: Date }, context: ContextType): Promise<CaloriesPerDay> => {
-      const entries = await getEntries({ prisma }, { ownerId: context.user?.id, from, to });
+    caloriesPerDay: async (user: User, { from, to }: { from: Date, to: Date }): Promise<CaloriesPerDay> => {
+      const entries = await getEntries({ prisma }, { ownerId: user?.id, from, to });
 
       const caloriesByDay: Record<string, number> = entries.reduce((acc, entry: Entry) => {
         // TODO test if the aggregation works
@@ -119,6 +107,12 @@ export const getResolvers = (prisma: PrismaClient) => ({
 
       return aggregatedEntries;
     }
+  },
+
+  Entry: {
+    owner: async (entry: Entry) => {
+      return prisma.user.findUnique({where:{id: entry.ownerId}});
+    },
   },
 
   EntriesResponse: {

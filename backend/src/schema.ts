@@ -37,11 +37,7 @@ export const typeDefs = gql`
     jwt: String!
     isAdmin: Boolean!
     profile: Profile!
-  }
-
-  type Self {
-    user: User!
-    entries(from: Date, to: Date, limit: Int, offset: Int): [Entry!]!
+    entries(from: Date, to: Date, limit: Int, offset: Int): EntriesResponse!
     caloriesPerDay(from: Date, to: Date): [DailyCalorie!]!
   }
 
@@ -49,7 +45,7 @@ export const typeDefs = gql`
     """Lists all users. Normally this endpoint would be guarded by @auth(requires: ADMIN),
     but this resolver populates the user selector in the client"""
     users: [User!]!
-    self: Self!
+    self: User!
     entries(ownerId: Int, from: Date, to: Date, limit: Int, offset: Int): EntriesResponse @auth(requires: ADMIN)
   }
 
