@@ -6,6 +6,7 @@ import isNil from 'lodash.isnil';
 
 
 import { ContextType } from "./context";
+import { getEntries, getEntryCount, getSumCalories } from "./queries";
 import { dateScalar } from "./scalars";
 
 type CaloriesPerDay = {
@@ -36,9 +37,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
     users: async () => {
       return prisma.user.findMany();
     },
-    entries: async () => {
-      return prisma.entry.findMany()
-    },
+    entries: async (_: unknown, args: {}) => { return args },
     self: () => {
       return {};
     },
@@ -58,41 +57,14 @@ export const getResolvers = (prisma: PrismaClient) => ({
       return context.user;
     },
     entries: async (_: unknown, { from, to, limit, offset }: { from: Date, to: Date, limit: number, offset: number }, context: ContextType) => {
-      return prisma.entry.findMany({
-        where: {
-          AND: [
-            { ownerId: { equals: context?.user?.id } },
-            {
-              timestamp: { gte: from }
-            },
-            {
-              timestamp: { lte: to }
-            }
-          ]
-        },
-        take: limit,
-        skip: offset,
-      })
+      return getEntries({ prisma }, { ownerId: context.user?.id, from, to, limit, offset });
     },
     caloriesPerDay: async (_: unknown, { from, to }: { from: Date, to: Date }, context: ContextType): Promise<CaloriesPerDay> => {
-      const entries = await prisma.entry.findMany({
-        where: {
-          AND: [
-            {
-              ownerId: { equals: context?.user?.id }
-            },
-            {
-              timestamp: { gte: from }
-            },
-            {
-              timestamp: { lte: to }
-            }
-          ]
-        }
-      });
+      const entries = await getEntries({ prisma }, { ownerId: context.user?.id, from, to });
 
       const caloriesByDay: Record<string, number> = entries.reduce((acc, entry: Entry) => {
         // TODO test if the aggregation works
+        // Get user's timezone or default to GMT
         const date = dayjs(entry.timestamp).utc(true).local().tz('America/Detroit').format('YYYY-MM-DD');
         acc[date] = (acc[date] || 0) + entry.calorieValue;
         return acc;
@@ -105,5 +77,17 @@ export const getResolvers = (prisma: PrismaClient) => ({
 
       return aggregatedEntries;
     }
+  },
+
+  EntriesResponse: {
+    items: async (props: { ownerId?: number, from?: Date, to?: Date, limit?: number, offset?: number }) => {
+      return getEntries({ prisma }, props);
+    },
+    count: async (props: { ownerId?: number, from?: Date, to?: Date }) => {
+      return getEntryCount({ prisma }, props);
+    },
+    sumCalories: async (props: { ownerId?: number, from?: Date, to?: Date }) => {
+      return getSumCalories({ prisma }, props);
+    },
   }
 });

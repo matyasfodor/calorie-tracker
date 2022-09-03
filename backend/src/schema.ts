@@ -13,6 +13,13 @@ export const typeDefs = gql`
     cheatMeal: Boolean!
   }
 
+  type EntriesResponse {
+    # TODO push down limit offset for items
+    items: [Entry!]!
+    count: Int!
+    sumCalories: Int!
+  }
+
   type DailyCalorie {
     date: String!
     calories: Int!
@@ -41,8 +48,7 @@ export const typeDefs = gql`
     but this resolver populates the user selector in the client"""
     users: [User!]!
     self: Self!
-    # TODO: filter by dates, user, add pagination
-    entries(ownerId: Int, from: Date, to: Date, limit: Int, offset: Int): [Entry!]! @auth(requires: ADMIN)
+    entries(ownerId: Int, from: Date, to: Date, limit: Int, offset: Int): EntriesResponse @auth(requires: ADMIN)
   }
 
   input CreateOrUpdateEntry {
@@ -54,6 +60,9 @@ export const typeDefs = gql`
   }
 
   type Mutation {
+    # create entry - all authed users
+    # change cheat day status - all authed users
+    # update / delete entries - admin
     createOrUpdateEntry(entry: CreateOrUpdateEntry!, ownerId: Int): Entry @auth(requires: USER)
   }
 `;
