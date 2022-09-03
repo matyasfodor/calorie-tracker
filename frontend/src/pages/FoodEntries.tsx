@@ -1,9 +1,9 @@
 import { Button, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table/interface";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { useCreateFoodEntry } from "../apollo/mutations";
-import { useGetUserFoodEntries } from "../apollo/queries";
+import { useGetUserCaloriesByDay, useGetUserFoodEntries } from "../apollo/queries";
 import { FoodEntry } from "../common/types";
 import Calendar from "../components/Calendar";
 import { EntryModal } from "../components/EntryModal";
@@ -53,18 +53,24 @@ export const FoodEntries = () => {
   const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
 
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({});
+  // TODO track calendar state -> set current month accordingly
+  const [currentMonth, setCurrentMonth] = useState<{from: dayjs.Dayjs, to: dayjs.Dayjs}>({
+    from: dayjs().startOf('month'),
+    to: dayjs().endOf('month'),
+  });
+  const getUserCaloriesByDay = useGetUserCaloriesByDay(currentMonth);
 
   useEffect(() => {
-    if (getEntries.data) {
-      const caloriesByDay: Record<string, number> = getEntries.data.self.entries.items.reduce((acc, entry: FoodEntry) => {
-        const date = dayjs(entry.timestamp).format('YYYY-MM-DD');
-        acc[date] = (acc[date] || 0) + entry.calorieValue;
+    if (getUserCaloriesByDay.data) {
+
+      const caloriesByDay: Record<string, number> = getUserCaloriesByDay.data.self.caloriesPerDay.reduce((acc, {calories, date}) => {
+        acc[date] = calories;
         return acc;
       }, {} as Record<string, number>);
-      setCaloriesByDay(caloriesByDay);
-    }
 
-  }, [getEntries.data]);
+      setCaloriesByDay(caloriesByDay);
+    }  
+  }, [getUserCaloriesByDay.data]);
 
   if (getEntries.loading) {
     return (<Spin />)

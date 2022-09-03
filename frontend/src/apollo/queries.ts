@@ -60,3 +60,16 @@ const GET_ENTRY_COUNT = gql`
 `;
 
 export const useGetEntryCount = (variables = {}) => useQuery<{ entries: { count: number } }>(GET_ENTRY_COUNT, { variables });
+
+const GET_USER_CALORIES_BY_DAY = gql`
+  query getUserCaloriesByDay($from: Date, $to: Date) {
+    self {
+      caloriesPerDay(from: $from, to: $to) {
+        calories
+        date
+      }
+    }
+  }
+`;
+
+export const useGetUserCaloriesByDay = (variables={}) => useQuery<{self: {caloriesPerDay: {calories: number, date: string}[]}}>(GET_USER_CALORIES_BY_DAY, {variables});
