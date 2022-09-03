@@ -12,7 +12,7 @@ const GET_USERS = gql`
   }
 `;
 
-export const useGetUsers = () => useQuery<{users: User[]}>(GET_USERS);
+export const useGetUsers = () => useQuery<{ users: User[] }>(GET_USERS);
 
 const GET_ALL_ENTRIES = gql`
   query getAllEntries {
@@ -47,4 +47,14 @@ const GET_USER_FOOD_ENTRIES = gql`
   }
 `;
 
-export const useGetUserFoodEntries = () =>useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
+export const useGetUserFoodEntries = () => useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
+
+const GET_ENTRY_COUNT = gql`
+  query entryCount($from: Date, $to: Date) {
+    entries(from: $from, to: $to) {
+      count
+    }
+  }
+`;
+
+export const useGetEntryCount = (variables={}) => useQuery<{ entries: { count: number } }>(GET_ENTRY_COUNT, {variables});

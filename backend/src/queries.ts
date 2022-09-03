@@ -35,10 +35,10 @@ export const getEntryCount = async (
       AND: [
         { ownerId: { equals: ownerId } },
         {
-          timestamp: { gte: from }
+          timestamp: { gte: from ?? undefined }
         },
         {
-          timestamp: { lte: to }
+          timestamp: { lte: to ?? undefined }
         }
       ]
     },
