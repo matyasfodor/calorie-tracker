@@ -1,3 +1,10 @@
+export interface User {
+  id: string,
+  name: string,
+  jwt: string,
+  isAdmin: boolean,
+}
+
 export type FoodEntry = {
   id: number;
   name: string;
@@ -7,3 +14,9 @@ export type FoodEntry = {
 }
 
 export type FoodEntryWithoutId = Omit<FoodEntry, 'id'>;
+
+export type GetAllEntriesResponse = {
+  entries: {
+    items: FoodEntry[];
+  }
+}

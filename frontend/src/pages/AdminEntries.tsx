@@ -1,33 +1,10 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
 import { Button, Modal, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { FoodEntry, FoodEntryWithoutId } from "../common/types";
 import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { EntryModal } from "../components/EntryModal";
 import { useDeleteFoodEntry, useUpdateFoodEntry } from "../apollo/mutations";
-
-const GET_ALL_ENTRIES = gql`
-  query getAllEntries {
-    entries {
-      items {
-        name
-        id
-        calorieValue
-        timestamp
-        cheatMeal
-        owner {
-          name
-        }
-      }
-    }
-  }
-`;
-
-type GetAllEntriesResponse = {
-  entries: {
-    items: FoodEntry[];
-  }
-}
+import { useGetAllEntries } from "../apollo/queries";
 
 type ActionButtonsProps = {
   text: string, record: FoodEntry, index: number
@@ -93,7 +70,7 @@ const columns: ColumnsType<FoodEntry | {}> = [{
 
 export const AdminEntries = () => {
   // TODO refetch can probably be used to refetch data as needed.
-  const { loading, error, data } = useQuery<GetAllEntriesResponse>(GET_ALL_ENTRIES);
+  const { loading, error, data } = useGetAllEntries();
 
   return (<Table dataSource={data?.entries.items} columns={columns} />);
 }

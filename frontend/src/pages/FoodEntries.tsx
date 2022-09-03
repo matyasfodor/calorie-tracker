@@ -1,28 +1,12 @@
-import { gql, useQuery } from "@apollo/client";
 import { Button, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table/interface";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useCreateFoodEntry } from "../apollo/mutations";
+import { useGetUserFoodEntries } from "../apollo/queries";
 import { FoodEntry } from "../common/types";
 import Calendar from "../components/Calendar";
 import { EntryModal } from "../components/EntryModal";
-
-
-
-const GET_USER_FOOD_ENTRIES = gql`
-  query getUserFoodEntries {
-    self {
-      entries {
-        id
-        name
-        calorieValue
-        cheatMeal
-        timestamp
-      }
-    }
-  }
-`;
 
 const columns: ColumnsType<FoodEntry | {}> = [{
     title: 'Name',
@@ -65,7 +49,7 @@ const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDa
 }
 
 export const FoodEntries = () => {
-  const getEntries = useQuery<{ self: { entries: FoodEntry[] } }>(GET_USER_FOOD_ENTRIES);
+  const getEntries = useGetUserFoodEntries();
   const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
 
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({});

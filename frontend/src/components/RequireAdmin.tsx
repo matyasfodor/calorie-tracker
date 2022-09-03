@@ -6,6 +6,6 @@ export const RequireAdmin: React.FC<PropsWithChildren> = ({ children }) => {
   const { user } = useContext(AuthContext) as AuthContextType;
 
   return (<>
-    {user?.isAdmin === true ? children : <Navigate to="/home" replace />}
+    {user?.isAdmin === true ? children : <Navigate to="/" replace />}
   </>);
 }

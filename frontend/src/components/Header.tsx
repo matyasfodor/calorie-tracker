@@ -5,20 +5,10 @@ import { UserOutlined, DownOutlined } from "@ant-design/icons";
 
 import styled from 'styled-components';
 
-import { useQuery, gql } from '@apollo/client';
-import { AuthContext, AuthContextType, User } from '../contexts/AuthContext';
+import { AuthContext, AuthContextType } from '../contexts/AuthContext';
 import { useContext } from 'react';
-
-const GET_USERS = gql`
-  query getUsers {
-    users {
-      id
-      name
-      jwt
-      isAdmin
-    }
-  }
-`;
+import { useGetUsers } from '../apollo/queries';
+import { User } from '../common/types';
 
 const StyledAntHeader = styled(AntHeader)`
   padding-right: 0;
@@ -30,7 +20,7 @@ const SyledMenu = styled(Menu)`
 `;
 
 export const Header = () => {
-  const { loading, error, data } = useQuery<{users: User[]}>(GET_USERS);
+  const { loading, error, data } = useGetUsers();
 
   const {user, setUser} = useContext(AuthContext) as AuthContextType;
 

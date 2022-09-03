@@ -16,12 +16,14 @@ function getItem(
 
 const getRoutes = (isAdmin: boolean) => {
   const adminRoutes = [
-    {path: "/admin-entries", title: "[Admin] Food Entries"},
+    { path: "/admin-entries", title: "[Admin] Food Entries" },
+    { path: "/admin-report", title: "[Admin] Report" },
   ]
 
   return [
-    {path: "/food-entries", title: "My Food Entries"},
-    ...(isAdmin ? adminRoutes: []),
+    { path: "/", title: "Home" },
+    { path: "/food-entries", title: "My Food Entries" },
+    ...(isAdmin ? adminRoutes : []),
   ];
 }
 
@@ -30,19 +32,19 @@ export const Menu = () => {
 
   const routes = getRoutes(user?.isAdmin ?? false);
 
-  const items = routes.map(({path, title}) => getItem(<Link to={path}>{title}</Link>, path),)
+  const items = routes.map(({ path, title }) => getItem(<Link to={path}>{title}</Link>, path),)
 
   const useCurrentPath = () => {
     const location = useLocation()
     const match = matchRoutes(routes, location)
-  
+
     return match?.[0].pathnameBase ?? ''
   }
 
   const currentPath = useCurrentPath();
 
   return (
-    <AntMenu theme="dark" defaultSelectedKeys={[currentPath]} mode="inline" items={items} activeKey={currentPath}/>
+    <AntMenu theme="dark" defaultSelectedKeys={[currentPath]} mode="inline" items={items} activeKey={currentPath} />
   )
 }
 

@@ -2,13 +2,9 @@ import { createContext, PropsWithChildren, useMemo, useState } from "react";
 import jwtDecode from "jwt-decode";
 
 import { LOCAL_STORAGE__AUTH } from "../consts";
-
-export interface User {
-  id: string, name: string, jwt: string, isAdmin: boolean
-}
+import { User } from "../common/types";
 
 export type AuthContextType = { user: User | null; setUser: (user: User | null) => void; };
-
 
 const getUserFromJwt = (token: string): User | null => {
   const decodedToken: {user?: User} = jwtDecode(token);
