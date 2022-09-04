@@ -1,4 +1,5 @@
 import { Menu } from 'antd';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import Avatar from 'antd/lib/avatar/avatar';
 import { Header as AntHeader } from 'antd/lib/layout/layout';
 import { UserOutlined, DownOutlined } from "@ant-design/icons";
@@ -22,7 +23,7 @@ const SyledMenu = styled(Menu)`
 export const Header = () => {
   const { loading, error, data } = useGetUsers();
 
-  const {user, setUser} = useContext(AuthContext) as AuthContextType;
+  const { user, setUser } = useContext(AuthContext) as AuthContextType;
 
   if (loading) return <p>Loading...</p>;
 
@@ -32,24 +33,29 @@ export const Header = () => {
     setUser(user);
   }
 
+  const children: ItemType[] = data.users.map((user) => (
+    {
+      key: user.id,
+      onClick: () => handleUserSelect(user),
+      label: user.name
+    }
+  ));
+
   return (
     <StyledAntHeader>
-      <SyledMenu mode="horizontal" triggerSubMenuAction="click">
-        <Menu.SubMenu
-          title={
+      <SyledMenu mode="horizontal" triggerSubMenuAction="click"
+
+        items={[{
+          key: 'submenu',
+          label: (
             <>
               <Avatar icon={<UserOutlined />} />
               <span>{user?.name ?? 'Select User!'}</span>
               <DownOutlined />
             </>
-          }
-        >
-          {
-            data.users.map((user) => (
-              <Menu.Item key={user.id} onClick={() => handleUserSelect(user)}>{user.name}</Menu.Item>
-            ))
-          }
-        </Menu.SubMenu>
-      </SyledMenu>
+          ),
+          children,
+        }]}
+      />
     </StyledAntHeader>);
 }
