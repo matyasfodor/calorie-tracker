@@ -24,6 +24,7 @@ export const GET_ALL_ENTRIES = gql`
         timestamp
         cheatMeal
         owner {
+          id
           name
         }
       }
@@ -37,6 +38,7 @@ export const useGetAllEntries = (variables = {}) => useQuery<GetAllEntriesRespon
 export const GET_USER_FOOD_ENTRIES = gql`
   query getUserFoodEntries($from: Date, $to: Date, $limit: Int, $offset: Int) {
     self {
+      id
       entries(from: $from, to: $to) {
         items(limit: $limit, offset: $offset) {
           id
@@ -66,6 +68,7 @@ export const useGetEntryCount = (variables = {}) => useQuery<{ entries: { count:
 export const GET_USER_CALORIES_BY_DAY = gql`
   query getUserCaloriesByDay($from: Date, $to: Date, $timezone: String) {
     self {
+      id
       profile {
         calorieLimit
       }
