@@ -31,7 +31,6 @@ model User {
 model Profile {
   id           Int @id @default(autoincrement())
   calorieLimit Int @default(2100) @map("calorie_limit")
-  timeZone     String?
 
   user   User @relation(fields: [userId], references: [id])
   userId Int  @unique

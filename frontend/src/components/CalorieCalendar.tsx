@@ -26,22 +26,26 @@ const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDa
 };
 
 export const CalorieCalendar = () => {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({});
 
 
   const [currentMonth, setCurrentMonth] = useState<{ from: dayjs.Dayjs, to: dayjs.Dayjs }>({
-    from: dayjs().startOf('month'),
-    to: dayjs().endOf('month'),
+    from: dayjs().utc().tz(timezone).startOf('month'),
+    to: dayjs().utc().tz(timezone).endOf('month'),
   });
 
 
 
-  const getUserCaloriesByDay = useGetUserCaloriesByDay(currentMonth);
+  const getUserCaloriesByDay = useGetUserCaloriesByDay({
+    ...currentMonth,
+    timezone,
+  });
 
   useEffect(() => {
     if (getUserCaloriesByDay.data) {
 
-      const caloriesByDay: Record<string, number> = getUserCaloriesByDay.data.self.caloriesPerDay.reduce((acc, { calories, date }) => {
+      const caloriesByDay: Record<string, number> = getUserCaloriesByDay.data.self.entries.caloriesPerDay.reduce((acc, { calories, date }) => {
         acc[date] = calories;
         return acc;
       }, {} as Record<string, number>);

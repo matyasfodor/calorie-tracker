@@ -61,6 +61,9 @@ export const getSumCalories = async (
         },
         {
           timestamp: { lte: to }
+        },
+        {
+          cheatMeal: { equals: false }
         }
       ]
     },

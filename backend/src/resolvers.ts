@@ -70,13 +70,6 @@ export const getResolvers = (prisma: PrismaClient) => ({
     entries: async (user: User, { from, to, limit, offset }: { from: Date, to: Date, limit: number, offset: number }) => {
       return { ownerId: user.id, from, to, limit, offset };
     },
-    caloriesPerDay: async (user: User, { from, to }: { from: Date, to: Date }): Promise<CaloriesPerDay> => {
-      const entries = await getEntries({ prisma }, { ownerId: user?.id, from, to });
-
-      const aggregatedEntries = aggregateCaloriesPerDay({entries})
-
-      return aggregatedEntries;
-    }
   },
 
   Entry: {
@@ -96,7 +89,15 @@ export const getResolvers = (prisma: PrismaClient) => ({
       return getEntryCount({ prisma }, props);
     },
     sumCalories: async (props: { ownerId?: number, from?: Date, to?: Date }) => {
-      return getSumCalories({ prisma }, props);
+      const sumCalories = await getSumCalories({ prisma }, props);
+      return sumCalories ?? 0;
     },
+    caloriesPerDay: async ({ownerId, from, to}: { ownerId?: number, from?: Date, to?: Date }, { timezone }: { timezone?: string }): Promise<CaloriesPerDay> => {
+      const entries = await getEntries({ prisma }, { ownerId: ownerId, from, to });
+
+      const aggregatedEntries = aggregateCaloriesPerDay({ entries, userTimeZone: timezone })
+
+      return aggregatedEntries;
+    }
   }
 });

@@ -19,6 +19,7 @@ export const typeDefs = gql`
     items(limit: Int, offset: Int): [Entry!]!
     count: Int!
     sumCalories: Int!
+    caloriesPerDay(timezone: String): [DailyCalorie!]!
   }
 
   type DailyCalorie {
@@ -28,7 +29,6 @@ export const typeDefs = gql`
 
   type Profile {
     calorieLimit: Int!
-    timeZone: String
   }
 
   type User {
@@ -38,7 +38,6 @@ export const typeDefs = gql`
     isAdmin: Boolean!
     profile: Profile!
     entries(from: Date, to: Date): EntriesResponse!
-    caloriesPerDay(from: Date, to: Date): [DailyCalorie!]!
   }
 
   type Query {

@@ -4,18 +4,16 @@ import dayjs from "dayjs";
 import { useGetAllUserCaloriesByDay, useGetEntryCount } from "../apollo/queries";
 
 // TODO extract into it's own function
-const columns: ColumnsType<{ id: string, name: string, caloriesPerDay: { calories: number, date: string }[] }> = [
+const columns: ColumnsType<{ id: string, name: string, entries: { sumCalories: number } }> = [
   {
     title: 'Name',
     dataIndex: 'name',
-    key: 'name'
+    key: 'name',
   },
   {
     title: 'Calories last week',
     key: 'calories',
-    render: (text, record, index) => {
-      return record.caloriesPerDay.reduce((prev, {calories}) => prev + calories, 0);
-    }
+    dataIndex: ['entries', 'sumCalories'],
   }
 ]
 
