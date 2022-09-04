@@ -29,7 +29,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
     // setCheatMeal(entryId: Int, cheatMeal: Boolean): Entry @auth(requires: USER)
     setCheatMeal: async (_: unknown, { entryId, cheatMeal }: { entryId: number, cheatMeal: boolean }, context: ContextType): Promise<Entry> => {
       const entry = await prisma.entry.findUnique({ where: { id: entryId } });
-      if (!context.user?.isAdmin || entry?.ownerId !== context.user?.id) {
+      if (!context.user?.isAdmin && entry?.ownerId !== context.user?.id) {
         throw new AuthenticationError(`Food entry with id ${entryId} does not exists`);
       }
       const updatedEntry = await prisma.entry.update({ where: { id: entryId }, data: { cheatMeal } });
