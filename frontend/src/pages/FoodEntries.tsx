@@ -8,29 +8,12 @@ import { useGetUserCaloriesByDay, useGetUserFoodEntries } from "../apollo/querie
 import { FoodEntry } from "../common/types";
 import Calendar from "../components/Calendar";
 import { CheatMealRenderer } from "../components/CheatMealCheckbox";
+import DatePicker from "../components/DatePicker";
 import { EntryModal } from "../components/EntryModal";
+import { RangeValue } from 'rc-picker/lib/interface';
 
 
-const columns: ColumnsType<FoodEntry | {}> = [{
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name'
-  }, {
-    title: 'Calorie Value',
-    dataIndex: 'calorieValue',
-    key: 'calorieValue'
-  }, {
-    title: 'Is cheat meal',
-    key: 'cheatMeal',
-    render: (text, record, index) => {
-        return <CheatMealRenderer entry={(record as FoodEntry)}/>
-    },
-  }, {
-    title: 'Date',
-    dataIndex: 'timestamp',
-    key: 'timestamp'
-  }
-];
+const { RangePicker } = DatePicker;
 
 const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDay: Record<string, number> }) => {
   const calendarDate = date.format('YYYY-MM-DD');
@@ -54,27 +37,64 @@ const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDa
 }
 
 export const FoodEntries = () => {
-  const getEntries = useGetUserFoodEntries();
+  const [filterInterval, setFilterInterval] = useState<{ from: dayjs.Dayjs | null, to: dayjs.Dayjs | null }>({
+    from: null,
+    to: null,
+  });
+
+  const getEntries = useGetUserFoodEntries({
+    from: filterInterval.from,
+    to: filterInterval.to,
+  });
   const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
 
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({});
   // TODO track calendar state -> set current month accordingly
-  const [currentMonth, setCurrentMonth] = useState<{from: dayjs.Dayjs, to: dayjs.Dayjs}>({
+  const [currentMonth, setCurrentMonth] = useState<{ from: dayjs.Dayjs, to: dayjs.Dayjs }>({
     from: dayjs().startOf('month'),
     to: dayjs().endOf('month'),
   });
   const getUserCaloriesByDay = useGetUserCaloriesByDay(currentMonth);
 
+  const handleFilterChange = (value: RangeValue<Dayjs>) => {
+    setFilterInterval({ from: value?.[0] ?? null, to: value?.[1] ?? null });
+  };
+
+  const columns: ColumnsType<FoodEntry | {}> = [
+    {
+      title: 'Date',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      filterDropdown: () => <div>
+        <RangePicker value={[filterInterval.from, filterInterval.to]} onChange={handleFilterChange} />
+      </div>
+    }, {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name'
+    }, {
+      title: 'Calorie Value',
+      dataIndex: 'calorieValue',
+      key: 'calorieValue'
+    }, {
+      title: 'Is cheat meal',
+      key: 'cheatMeal',
+      render: (_, record) => {
+        return <CheatMealRenderer entry={(record as FoodEntry)} />
+      },
+    },
+  ];
+
   useEffect(() => {
     if (getUserCaloriesByDay.data) {
 
-      const caloriesByDay: Record<string, number> = getUserCaloriesByDay.data.self.caloriesPerDay.reduce((acc, {calories, date}) => {
+      const caloriesByDay: Record<string, number> = getUserCaloriesByDay.data.self.caloriesPerDay.reduce((acc, { calories, date }) => {
         acc[date] = calories;
         return acc;
       }, {} as Record<string, number>);
 
       setCaloriesByDay(caloriesByDay);
-    }  
+    }
   }, [getUserCaloriesByDay.data]);
 
   if (getEntries.loading) {
@@ -102,13 +122,13 @@ export const FoodEntries = () => {
           onPanelChange={onCalendarChange}
         />
       </div>
-      <Table dataSource={getEntries.data.self.entries.items} columns={columns} footer={() => 
+      <Table dataSource={getEntries.data.self.entries.items} columns={columns} footer={() =>
         <EntryModal
           title="Create food entry"
           okText="Create"
           loading={createFoodEntryState.loading}
-          buttonRenderer={({showModal}) => <Button onClick={showModal}>Add Entry</Button>}
-          onSubmit={(entry) => {createFoodEntry({variables: {entry}})}}
-          />} />;
+          buttonRenderer={({ showModal }) => <Button onClick={showModal}>Add Entry</Button>}
+          onSubmit={(entry) => { createFoodEntry({ variables: { entry } }) }}
+        />} />;
     </div>);
 }

@@ -2,33 +2,33 @@ import { Entry, PrismaClient, PrismaPromise } from "@prisma/client"
 
 
 export const getEntries = async (
-  {prisma}: {prisma: PrismaClient},
-  {ownerId, from, to, limit, offset}: {ownerId?: number, from?: Date, to?: Date, limit?: number, offset?: number}
+  { prisma }: { prisma: PrismaClient },
+  { ownerId, from, to, limit, offset }: { ownerId?: number, from?: Date | null, to?: Date | null, limit?: number | null, offset?: number | null }
 ): Promise<Entry[]> => {
   const response = prisma.entry.findMany({
     where: {
       AND: [
         { ownerId: { equals: ownerId } },
         {
-          timestamp: { gte: from }
+          timestamp: { gte: from ?? undefined }
         },
         {
-          timestamp: { lte: to }
+          timestamp: { lte: to ?? undefined }
         }
       ]
     },
     orderBy: {
       timestamp: 'desc'
     },
-    take: limit,
-    skip: offset,
+    take: limit ?? undefined,
+    skip: offset ?? undefined,
   });
   return response;
 };
 
 export const getEntryCount = async (
-  {prisma}: {prisma: PrismaClient},
-  {ownerId, from, to}: {ownerId?: number, from?: Date, to?: Date}
+  { prisma }: { prisma: PrismaClient },
+  { ownerId, from, to }: { ownerId?: number, from?: Date, to?: Date }
 ): Promise<number> => {
   const response = await prisma.entry.aggregate({
     where: {
@@ -49,8 +49,8 @@ export const getEntryCount = async (
 
 
 export const getSumCalories = async (
-  {prisma}: {prisma: PrismaClient},
-  {ownerId, from, to}: {ownerId?: number, from?: Date, to?: Date}
+  { prisma }: { prisma: PrismaClient },
+  { ownerId, from, to }: { ownerId?: number, from?: Date, to?: Date }
 ): Promise<number | null> => {
   const response = await prisma.entry.aggregate({
     where: {
@@ -64,7 +64,7 @@ export const getSumCalories = async (
         }
       ]
     },
-    _sum: {calorieValue: true}
+    _sum: { calorieValue: true }
   });
   return response._sum.calorieValue;
 }
