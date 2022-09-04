@@ -4,6 +4,7 @@ import isNil from 'lodash.isnil'
 
 import { useGetUserCaloriesByDay } from '../apollo/queries'
 import Calendar from '../components/Calendar'
+import { Tooltip } from 'antd'
 
 interface CellRendererProps {
   date: dayjs.Dayjs
@@ -23,12 +24,14 @@ const CellRenderer = ({ date, caloriesByDay, calorieLimit }: CellRendererProps) 
   if (calories === 0) {
     color = '#FFFFFF'
   } else if (calories < calorieLimit) {
-    color = '#00FF00'
+    color = '#b7eb8f'
   } else {
-    color = '#FF0000'
+    color = '#ffccc7'
   }
 
-  return <div style={{ width: '100%', height: '100%', backgroundColor: color }}>{dayOfMonth}</div>
+  return (<Tooltip title={`${calories}`}>
+    <div style={{ width: '100%', height: '100%', backgroundColor: color }}>{dayOfMonth}</div>
+  </Tooltip>)
 }
 
 export const CalorieCalendar = () => {
@@ -36,8 +39,8 @@ export const CalorieCalendar = () => {
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({})
 
   const [currentMonth, setCurrentMonth] = useState<{ from: dayjs.Dayjs, to: dayjs.Dayjs }>({
-    from: dayjs().utc().tz(timezone).startOf('month'),
-    to: dayjs().utc().tz(timezone).endOf('month')
+    from: dayjs().utc().tz(timezone).startOf('month').startOf('week'),
+    to: dayjs().utc().tz(timezone).endOf('month').endOf('week')
   })
 
   const getUserCaloriesByDay = useGetUserCaloriesByDay({
@@ -61,8 +64,8 @@ export const CalorieCalendar = () => {
 
   const onCalendarChange = (date: dayjs.Dayjs) => {
     setCurrentMonth({
-      from: date.utc(true).startOf('month'),
-      to: date.utc(true).endOf('month')
+      from: date.utc().tz(timezone).utc(true).startOf('month').startOf('week'),
+      to: date.utc().tz(timezone).utc(true).endOf('month').endOf('week')
     })
   }
 

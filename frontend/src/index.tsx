@@ -10,8 +10,10 @@ import { AuthContextProvider } from './contexts/AuthContext'
 
 import dayjs_plugin_timezone from 'dayjs/plugin/timezone'
 import dayjs_plugin_utc from 'dayjs/plugin/utc'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import dayjs from 'dayjs'
 
+dayjs.extend(relativeTime)
 dayjs.extend(dayjs_plugin_utc)
 dayjs.extend(dayjs_plugin_timezone)
 

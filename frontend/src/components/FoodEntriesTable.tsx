@@ -1,10 +1,13 @@
 import Table, { ColumnsType } from 'antd/lib/table'
 import dayjs from 'dayjs'
+import { RangeValue } from 'rc-picker/lib/interface'
+import { ReactNode } from 'react'
+import { Tooltip } from 'antd'
+
 import { FoodEntry } from '../common/types'
 import { CheatMealRenderer } from './CheatMealCheckbox'
 import DatePicker from './DatePicker'
-import { RangeValue } from 'rc-picker/lib/interface'
-import { ReactNode } from 'react'
+
 
 export interface TableFilterState {
   from?: dayjs.Dayjs | null
@@ -46,7 +49,12 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         <div>
           <RangePicker value={[props.tableState.from ?? null, props.tableState.to ?? null]} onChange={handleFilterChange} />
         </div>
-      )
+      ),
+      render: (_, record) => {
+        return (<Tooltip title={`${dayjs((record as FoodEntry).timestamp).format('YYYY-MM-DD HH:MM:ss')}`}>
+          {dayjs((record as FoodEntry).timestamp).fromNow()}
+        </Tooltip>)
+      }
     },
     {
       title: 'Name',
