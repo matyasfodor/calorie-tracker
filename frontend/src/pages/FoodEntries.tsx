@@ -1,6 +1,6 @@
 import { Button, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table/interface";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 import { useEffect, useState } from "react";
 import { useCreateFoodEntry } from "../apollo/mutations";
@@ -85,12 +85,22 @@ export const FoodEntries = () => {
     return (<span>Error :( {getEntries.error?.message}</span>);
   }
 
+  const onCalendarChange = (date: Dayjs) => {
+    setCurrentMonth({
+      from: date.utc(true).startOf('month'),
+      to: date.utc(true).endOf('month'),
+    });
+  };
+
   return (
     <div>
       <div style={{ width: 300 }}>
-        <Calendar fullscreen={false} dateFullCellRender={(date: dayjs.Dayjs) =>
-          <CellRenderer date={date} caloriesByDay={caloriesByDay} />
-        } />
+        <Calendar
+          fullscreen={false}
+          dateFullCellRender={(date: dayjs.Dayjs) =>
+            <CellRenderer date={date} caloriesByDay={caloriesByDay} />}
+          onPanelChange={onCalendarChange}
+        />
       </div>
       <Table dataSource={getEntries.data.self.entries.items} columns={columns} footer={() => 
         <EntryModal

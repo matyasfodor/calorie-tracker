@@ -63,13 +63,11 @@ export const EntryModal = (props: EntryModalProps) => {
       const timestamp = dayjs(new Date(
         timestampDate.year(), timestampDate.month(), timestampDate.date(),
         timestampTime.hour(), timestampTime.minute(), timestampTime.second()
-        // @ts-ignore
-      )).utc('z').format();
+      )).utc(true).format();
       const foodEntry = {
         timestamp,
         ...restValues,
       };
-      // await createFoodEntry({variables: {entry: foodEntry}});
       await props.onSubmit(foodEntry);
       form.resetFields();
       setIsModalVisible(false);
