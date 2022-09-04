@@ -1,6 +1,5 @@
 import { Entry, PrismaClient, User } from "@prisma/client";
 import { AuthenticationError } from "apollo-server";
-import dayjs from "dayjs";
 import jwt from 'jsonwebtoken';
 import isNil from 'lodash.isnil';
 
@@ -8,11 +7,9 @@ import isNil from 'lodash.isnil';
 import { ContextType } from "./context";
 import { getEntries, getEntryCount, getSumCalories } from "./queries";
 import { dateScalar } from "./scalars";
+import { aggregateCaloriesPerDay } from "./transformers";
+import { CaloriesPerDay } from "./types";
 
-type CaloriesPerDay = {
-  date: string;
-  calories: number;
-}[]
 
 export const getResolvers = (prisma: PrismaClient) => ({
   Date: dateScalar,
@@ -76,19 +73,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
     caloriesPerDay: async (user: User, { from, to }: { from: Date, to: Date }): Promise<CaloriesPerDay> => {
       const entries = await getEntries({ prisma }, { ownerId: user?.id, from, to });
 
-      const caloriesByDay: Record<string, number> = entries.reduce((acc, entry: Entry) => {
-        // TODO test if the aggregation works
-        // Get user's timezone or default to GMT
-        // @ts-ignore
-        const date = dayjs(entry.timestamp).utc(true).local().tz('America/Detroit').format('YYYY-MM-DD');
-        acc[date] = (acc[date] || 0) + entry.calorieValue;
-        return acc;
-      }, {} as Record<string, number>);
-
-      const aggregatedEntries: CaloriesPerDay = Object.entries(caloriesByDay).map(([date, calories]) => ({
-        date,
-        calories,
-      }))
+      const aggregatedEntries = aggregateCaloriesPerDay({entries})
 
       return aggregatedEntries;
     }
