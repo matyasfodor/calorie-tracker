@@ -18,5 +18,6 @@ export type FoodEntryWithoutId = Omit<FoodEntry, 'id'>;
 export type GetAllEntriesResponse = {
   entries: {
     items: FoodEntry[];
+    count: number;
   }
 }

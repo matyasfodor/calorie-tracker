@@ -15,16 +15,17 @@ const UserFoodEntriesTable = () => {
     limit: tableFilterState.limit,
     offset: tableFilterState.offset,
   });
-  const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
-
-  if (!getEntries.data || getEntries.error) {
-    return (<span>Error :( {getEntries.error?.message}</span>);
-  }
 
   const handleTableStateChange = (state: TableFilterState) => setTableFilterState(state);
 
+  const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
+
   const handleCreateFoodEntry = (entry: FoodEntryWithoutId) => {
     createFoodEntry({ variables: { entry } });
+  }
+
+  if (!getEntries.data || getEntries.error) {
+    return (<span>Error :( {getEntries.error?.message}</span>);
   }
 
   return (

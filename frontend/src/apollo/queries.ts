@@ -15,9 +15,9 @@ const GET_USERS = gql`
 export const useGetUsers = () => useQuery<{ users: User[] }>(GET_USERS);
 
 const GET_ALL_ENTRIES = gql`
-  query getAllEntries {
-    entries {
-      items {
+  query getAllEntries($from: Date, $to: Date, $limit: Int, $offset: Int) {
+    entries(from: $from, to: $to) {
+      items(limit: $limit, offset: $offset) {
         name
         id
         calorieValue
@@ -27,11 +27,12 @@ const GET_ALL_ENTRIES = gql`
           name
         }
       }
+      count
     }
   }
 `;
 
-export const useGetAllEntries = () => useQuery<GetAllEntriesResponse>(GET_ALL_ENTRIES);
+export const useGetAllEntries = (variables = {}) => useQuery<GetAllEntriesResponse>(GET_ALL_ENTRIES, { variables });
 
 const GET_USER_FOOD_ENTRIES = gql`
   query getUserFoodEntries($from: Date, $to: Date, $limit: Int, $offset: Int) {

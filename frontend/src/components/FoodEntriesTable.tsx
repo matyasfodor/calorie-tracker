@@ -22,6 +22,7 @@ type Props<T extends object> = {
   onTableStateChange: (values: TableFilterState) => void
   createLoading: boolean,
   createFoodEntry: (entry: FoodEntryWithoutId) => void;
+  extraColumns?: ColumnsType<T | {}>;
 }
 
 const { RangePicker } = DatePicker;
@@ -62,6 +63,7 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         return <CheatMealRenderer entry={(record as FoodEntry)} />
       },
     },
+    ...(props.extraColumns ?? []),
   ];
 
   const handlePaginationChange = (page: number, pageSize: number) => {

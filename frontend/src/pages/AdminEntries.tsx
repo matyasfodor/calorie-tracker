@@ -3,9 +3,11 @@ import { ColumnsType } from "antd/lib/table";
 import { FoodEntry, FoodEntryWithoutId } from "../common/types";
 import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { EntryModal } from "../components/EntryModal";
-import { useDeleteFoodEntry, useUpdateFoodEntry } from "../apollo/mutations";
+import { useCreateFoodEntry, useDeleteFoodEntry, useUpdateFoodEntry } from "../apollo/mutations";
 import { useGetAllEntries } from "../apollo/queries";
 import { CheatMealRenderer } from "../components/CheatMealCheckbox";
+import { FoodEntriesTable, TableFilterState } from "../components/FoodEntriesTable";
+import { useState } from "react";
 
 type ActionButtonsProps = {
   text: string, record: FoodEntry, index: number
@@ -40,25 +42,7 @@ const ActionButtons = (props: ActionButtonsProps) => {
     </div>);
 }
 
-const columns: ColumnsType<FoodEntry | {}> = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name'
-}, {
-  title: 'Calorie Value',
-  dataIndex: 'calorieValue',
-  key: 'calorieValue'
-}, {
-  title: 'Is cheat meal',
-  key: 'cheatMeal',
-  render: (text, record, index) => {
-    return <CheatMealRenderer entry={(record as FoodEntry)}/>
-},
-}, {
-  title: 'Date',
-  dataIndex: 'timestamp',
-  key: 'timestamp'
-}, {
+const extraColumns: ColumnsType<FoodEntry | {}> = [{
   title: 'Owner',
   dataIndex: ['owner', 'name'],
   key: 'owner'
@@ -72,8 +56,33 @@ const columns: ColumnsType<FoodEntry | {}> = [{
 ];
 
 export const AdminEntries = () => {
-  // TODO refetch can probably be used to refetch data as needed.
-  const { loading, error, data } = useGetAllEntries();
+  const [tableFilterState, setTableFilterState] = useState<TableFilterState>({limit: 10});
 
-  return (<Table dataSource={data?.entries.items} columns={columns} />);
+  // TODO refetch can probably be used to refetch data as needed.
+  const { loading, error, data } = useGetAllEntries({
+    from: tableFilterState.from,
+    to: tableFilterState.to,
+    limit: tableFilterState.limit,
+    offset: tableFilterState.offset,
+  });
+
+  const handleTableStateChange = (state: TableFilterState) => setTableFilterState(state);
+
+  const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
+
+  // TODO allow assigning entries to any user
+  const handleCreateFoodEntry = (entry: FoodEntryWithoutId) => {
+    createFoodEntry({ variables: { entry } });
+  }
+
+  return <FoodEntriesTable
+    dataSource={data?.entries.items ?? []}
+    total={data?.entries.count ?? 0}
+    dataLoading={loading}
+    tableState={tableFilterState}
+    createLoading={createFoodEntryState.loading}
+    onTableStateChange={handleTableStateChange}
+    createFoodEntry={handleCreateFoodEntry}
+    extraColumns={extraColumns}
+  />
 }
