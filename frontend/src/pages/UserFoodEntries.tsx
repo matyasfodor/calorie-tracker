@@ -1,42 +1,41 @@
-import { useState } from "react";
-import { useCreateFoodEntry } from "../apollo/mutations";
-import { useGetUserFoodEntries } from "../apollo/queries";
-import { FoodEntriesTable, TableFilterState } from "../components/FoodEntriesTable";
-import { CalorieCalendar } from "../components/CalorieCalendar";
-import { EntryModal } from "../components/EntryModal";
-import { Button } from "antd";
-
+import { useState } from 'react'
+import { useCreateFoodEntry } from '../apollo/mutations'
+import { useGetUserFoodEntries } from '../apollo/queries'
+import { FoodEntriesTable, TableFilterState } from '../components/FoodEntriesTable'
+import { CalorieCalendar } from '../components/CalorieCalendar'
+import { EntryModal } from '../components/EntryModal'
+import { Button } from 'antd'
 
 const UserFoodEntriesTable = () => {
-  const [tableFilterState, setTableFilterState] = useState<TableFilterState>({limit: 10});
+  const [tableFilterState, setTableFilterState] = useState<TableFilterState>({ limit: 10 })
 
   const getEntries = useGetUserFoodEntries({
     from: tableFilterState.from,
     to: tableFilterState.to,
     limit: tableFilterState.limit,
-    offset: tableFilterState.offset,
-  });
+    offset: tableFilterState.offset
+  })
 
-  const handleTableStateChange = (state: TableFilterState) => setTableFilterState(state);
+  const handleTableStateChange = (state: TableFilterState) => setTableFilterState(state)
 
-  const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
+  const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry()
 
-
-  if (!getEntries.data || getEntries.error) {
-    return (<span>Error :( {getEntries.error?.message}</span>);
+  if (getEntries.data == null || getEntries.error != null) {
+    return <span>Error :( {getEntries.error?.message}</span>
   }
 
-  const footerRender = () =>
+  const footerRender = () => (
     <EntryModal
-      title="Create food entry"
-      okText="Create"
+      title='Create food entry'
+      okText='Create'
       loading={createFoodEntryState.loading}
       buttonRenderer={({ showModal }) => <Button onClick={showModal}>Add Entry</Button>}
-      onSubmit={(entry) => { 
+      onSubmit={(entry) => {
         // TODO allow assigning entries to any user
-        createFoodEntry({ variables: { entry } });
+        void createFoodEntry({ variables: { entry } })
       }}
     />
+  )
 
   return (
     <FoodEntriesTable
@@ -51,11 +50,10 @@ const UserFoodEntriesTable = () => {
 }
 
 export const UserFoodEntries = () => {
-
-
   return (
     <div>
       <CalorieCalendar />
       <UserFoodEntriesTable />
-    </div>);
+    </div>
+  )
 }

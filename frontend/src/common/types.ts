@@ -1,24 +1,24 @@
 export interface User {
-  id: string,
-  name: string,
-  jwt: string,
-  isAdmin: boolean,
+  id: string
+  name: string
+  jwt: string
+  isAdmin: boolean
 }
 
-export type FoodEntry = {
-  id: number;
-  name: string;
-  calorieValue: number;
-  cheatMeal: boolean;
-  timestamp: string;
-  ownerId?: number;
+export interface FoodEntry {
+  id: number
+  name: string
+  calorieValue: number
+  cheatMeal: boolean
+  timestamp: string
+  ownerId?: number
 }
 
-export type FoodEntryWithoutId = Omit<FoodEntry, 'id'>;
+export type FoodEntryWithoutId = Omit<FoodEntry, 'id'>
 
-export type GetAllEntriesResponse = {
+export interface GetAllEntriesResponse {
   entries: {
-    items: FoodEntry[];
-    count: number;
+    items: FoodEntry[]
+    count: number
   }
 }

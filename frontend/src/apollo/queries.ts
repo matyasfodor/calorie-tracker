@@ -1,5 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
-import { FoodEntry, GetAllEntriesResponse, User } from "../common/types";
+import { gql, useQuery } from '@apollo/client'
+import { FoodEntry, GetAllEntriesResponse, User } from '../common/types'
 
 export const GET_USERS = gql`
   query getUsers {
@@ -10,9 +10,9 @@ export const GET_USERS = gql`
       isAdmin
     }
   }
-`;
+`
 
-export const useGetUsers = () => useQuery<{ users: User[] }>(GET_USERS);
+export const useGetUsers = () => useQuery<{ users: User[] }>(GET_USERS)
 
 export const GET_ALL_ENTRIES = gql`
   query getAllEntries($from: Date, $to: Date, $limit: Int, $offset: Int) {
@@ -31,9 +31,9 @@ export const GET_ALL_ENTRIES = gql`
       count
     }
   }
-`;
+`
 
-export const useGetAllEntries = (variables = {}) => useQuery<GetAllEntriesResponse>(GET_ALL_ENTRIES, { variables });
+export const useGetAllEntries = (variables = {}) => useQuery<GetAllEntriesResponse>(GET_ALL_ENTRIES, { variables })
 
 export const GET_USER_FOOD_ENTRIES = gql`
   query getUserFoodEntries($from: Date, $to: Date, $limit: Int, $offset: Int) {
@@ -51,9 +51,10 @@ export const GET_USER_FOOD_ENTRIES = gql`
       }
     }
   }
-`;
+`
 
-export const useGetUserFoodEntries = (variables = {}) => useQuery<{ self: { entries: { items: FoodEntry[], count: number } } }>(GET_USER_FOOD_ENTRIES, { variables });
+export const useGetUserFoodEntries = (variables = {}) =>
+  useQuery<{ self: { entries: { items: FoodEntry[], count: number } } }>(GET_USER_FOOD_ENTRIES, { variables })
 
 export const GET_ENTRY_COUNT = gql`
   query entryCount($from: Date, $to: Date) {
@@ -61,9 +62,9 @@ export const GET_ENTRY_COUNT = gql`
       count
     }
   }
-`;
+`
 
-export const useGetEntryCount = (variables = {}) => useQuery<{ entries: { count: number } }>(GET_ENTRY_COUNT, { variables });
+export const useGetEntryCount = (variables = {}) => useQuery<{ entries: { count: number } }>(GET_ENTRY_COUNT, { variables })
 
 export const GET_USER_CALORIES_BY_DAY = gql`
   query getUserCaloriesByDay($from: Date, $to: Date, $timezone: String) {
@@ -80,9 +81,13 @@ export const GET_USER_CALORIES_BY_DAY = gql`
       }
     }
   }
-`;
+`
 
-export const useGetUserCaloriesByDay = (variables = {}) => useQuery<{ self: { profile: { calorieLimit: number }, entries: { caloriesPerDay: { calories: number, date: string }[] } } }>(GET_USER_CALORIES_BY_DAY, { variables });
+export const useGetUserCaloriesByDay = (variables = {}) =>
+  useQuery<{ self: { profile: { calorieLimit: number }, entries: { caloriesPerDay: Array<{ calories: number, date: string }> } } }>(
+    GET_USER_CALORIES_BY_DAY,
+    { variables }
+  )
 
 export const GET_ALL_USER_CALORIES_BY_DAY = gql`
   query getAllUserCaloriesByDay($from: Date, $to: Date) {
@@ -94,6 +99,7 @@ export const GET_ALL_USER_CALORIES_BY_DAY = gql`
       }
     }
   }
-`;
+`
 
-export const useGetAllUserCaloriesByDay = (variables = {}) => useQuery<{ users: { id: string, name: string, entries: { sumCalories: number } }[] }>(GET_ALL_USER_CALORIES_BY_DAY, { variables });
+export const useGetAllUserCaloriesByDay = (variables = {}) =>
+  useQuery<{ users: Array<{ id: string, name: string, entries: { sumCalories: number } }> }>(GET_ALL_USER_CALORIES_BY_DAY, { variables })

@@ -1,74 +1,78 @@
-import Table, { ColumnsType } from "antd/lib/table";
-import dayjs from "dayjs";
-import { FoodEntry } from "../common/types";
-import { CheatMealRenderer } from "./CheatMealCheckbox";
-import DatePicker from "./DatePicker";
-import { RangeValue } from "rc-picker/lib/interface";
-import { ReactNode } from "react";
+import Table, { ColumnsType } from 'antd/lib/table'
+import dayjs from 'dayjs'
+import { FoodEntry } from '../common/types'
+import { CheatMealRenderer } from './CheatMealCheckbox'
+import DatePicker from './DatePicker'
+import { RangeValue } from 'rc-picker/lib/interface'
+import { ReactNode } from 'react'
 
-export type TableFilterState = {
-  from?: dayjs.Dayjs | null,
-  to?: dayjs.Dayjs | null,
-  limit?: number | null,
+export interface TableFilterState {
+  from?: dayjs.Dayjs | null
+  to?: dayjs.Dayjs | null
+  limit?: number | null
   offset?: number | null
 }
 
-type Props<T extends object> = {
-  dataSource: T[],
-  total: number,
-  dataLoading: boolean,
-  tableState: TableFilterState,
+interface Props<T extends object> {
+  dataSource: T[]
+  total: number
+  dataLoading: boolean
+  tableState: TableFilterState
   onTableStateChange: (values: TableFilterState) => void
-  extraColumns?: ColumnsType<T | {}>;
-  footerRenderer: () => ReactNode;
+  extraColumns?: ColumnsType<T | {}>
+  footerRenderer: () => ReactNode
 }
 
-const { RangePicker } = DatePicker;
+const { RangePicker } = DatePicker
 
 export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
-
   const handleFilterChange = (value: RangeValue<dayjs.Dayjs>) => {
     const update: Partial<TableFilterState> = {
       from: value?.[0] ?? null,
-      to: value?.[1] ?? null,
-    };
+      to: value?.[1] ?? null
+    }
     props.onTableStateChange({
       ...props.tableState,
-      ...update,
+      ...update
     })
-  };
+  }
 
   const columns: ColumnsType<T | {}> = [
     {
       title: 'Date',
       dataIndex: 'timestamp',
       key: 'timestamp',
-      filterDropdown: () => <div>
-        <RangePicker value={[props.tableState.from ?? null, props.tableState.to ?? null]} onChange={handleFilterChange} />
-      </div>
-    }, {
+      filterDropdown: () => (
+        <div>
+          <RangePicker value={[props.tableState.from ?? null, props.tableState.to ?? null]} onChange={handleFilterChange} />
+        </div>
+      )
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       key: 'name'
-    }, {
+    },
+    {
       title: 'Calorie Value',
       dataIndex: 'calorieValue',
       key: 'calorieValue'
-    }, {
+    },
+    {
       title: 'Is cheat meal',
       key: 'cheatMeal',
       render: (_, record) => {
-        return <CheatMealRenderer entry={(record as FoodEntry)} />
-      },
+        return <CheatMealRenderer entry={record as FoodEntry} />
+      }
     },
-    ...(props.extraColumns ?? []),
-  ];
+    ...(props.extraColumns ?? [])
+  ]
 
   const handlePaginationChange = (page: number, pageSize: number) => {
     props.onTableStateChange({
       ...props.tableState,
       limit: pageSize,
-      offset: (page - 1) * pageSize,
+      offset: (page - 1) * pageSize
     })
   }
 
@@ -76,15 +80,16 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
     <>
       <Table
         dataSource={props.dataSource}
-        rowKey="id"
+        rowKey='id'
         loading={props.dataLoading}
         columns={columns}
         footer={props.footerRenderer}
         pagination={{
           current: (props.tableState.offset ?? 0 / 10) + 1,
           total: props.total,
-          onChange: handlePaginationChange,
+          onChange: handlePaginationChange
         }}
       />
-    </>)
-};
+    </>
+  )
+}

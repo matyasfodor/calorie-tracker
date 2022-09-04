@@ -1,22 +1,28 @@
-import { Routes, Route } from "react-router-dom";
-import { RequireAdmin } from "../components/RequireAdmin";
-import { AdminEntries } from "./AdminEntries";
-import { AdminReportScreen } from "./AdminReportScreen";
-import { UserFoodEntries } from "./UserFoodEntries";
+import { Routes, Route } from 'react-router-dom'
+import { RequireAdmin } from '../components/RequireAdmin'
+import { AdminEntries } from './AdminEntries'
+import { AdminReportScreen } from './AdminReportScreen'
+import { UserFoodEntries } from './UserFoodEntries'
 
 export const MainContent = () => (
   <Routes>
-    <Route path="/" element={<div>Home</div>} />
-    <Route path="food-entries" element={<UserFoodEntries/>} />
-    <Route path="admin-entries" element={
-      <RequireAdmin>
-        <AdminEntries/>
-      </RequireAdmin>
-    } />
-    <Route path="admin-report" element={
-      <RequireAdmin>
-        <AdminReportScreen/>
-      </RequireAdmin>
-    } />
+    <Route path='/' element={<div>Home</div>} />
+    <Route path='food-entries' element={<UserFoodEntries />} />
+    <Route
+      path='admin-entries'
+      element={
+        <RequireAdmin>
+          <AdminEntries />
+        </RequireAdmin>
+      }
+    />
+    <Route
+      path='admin-report'
+      element={
+        <RequireAdmin>
+          <AdminReportScreen />
+        </RequireAdmin>
+      }
+    />
   </Routes>
 )

@@ -1,40 +1,42 @@
-import { createContext, PropsWithChildren, useMemo, useState } from "react";
-import jwtDecode from "jwt-decode";
+import { createContext, PropsWithChildren, useMemo, useState } from 'react'
+import jwtDecode from 'jwt-decode'
 
-import { LOCAL_STORAGE__AUTH } from "../consts";
-import { User } from "../common/types";
+import { LOCAL_STORAGE__AUTH } from '../consts'
+import { User } from '../common/types'
 
-export type AuthContextType = { user: User | null; setUser: (user: User | null) => void; };
-
-const getUserFromJwt = (token: string): User | null => {
-  const decodedToken: {user?: User} = jwtDecode(token);
-  return decodedToken?.user ?? null;
+export interface AuthContextType {
+  user: User | null
+  setUser: (user: User | null) => void
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const getUserFromJwt = (token: string): User | null => {
+  const decodedToken: { user?: User } = jwtDecode(token)
+  return decodedToken?.user ?? null
+}
 
-export const AuthContextProvider: React.FC<PropsWithChildren & {onAuthChange: () => void}> = ({ children, onAuthChange }) => {
+export const AuthContext = createContext<AuthContextType | null>(null)
 
-  const token = localStorage.getItem(LOCAL_STORAGE__AUTH);
+export const AuthContextProvider: React.FC<PropsWithChildren & { onAuthChange: () => void }> = ({ children, onAuthChange }) => {
+  const token = localStorage.getItem(LOCAL_STORAGE__AUTH)
 
-  const [user, setUserState] = useState<User | null>(token !== null ? getUserFromJwt(token) : null);
+  const [user, setUserState] = useState<User | null>(token !== null ? getUserFromJwt(token) : null)
   const setUser = (user: User | null) => {
     if (user !== null) {
-      localStorage.setItem(LOCAL_STORAGE__AUTH, user.jwt);
+      localStorage.setItem(LOCAL_STORAGE__AUTH, user.jwt)
     } else {
-      localStorage.removeItem(LOCAL_STORAGE__AUTH);
+      localStorage.removeItem(LOCAL_STORAGE__AUTH)
     }
-    onAuthChange();
-  
-    setUserState(user);
-  }
-  const providerValue = useMemo(() => ({
-    user, setUser
-  }), [user]);
+    onAuthChange()
 
-  return (
-    <AuthContext.Provider value={providerValue}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+    setUserState(user)
+  }
+  const providerValue = useMemo(
+    () => ({
+      user,
+      setUser
+    }),
+    [user]
+  )
+
+  return <AuthContext.Provider value={providerValue}>{children}</AuthContext.Provider>
+}
