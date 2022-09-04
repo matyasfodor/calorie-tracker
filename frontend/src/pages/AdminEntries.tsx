@@ -25,7 +25,7 @@ const ActionButtons = (props: ActionButtonsProps) => {
       content: `Are you sure you want to delete "${props.record.name}"?`,
       onOk: async () => {
         await deleteFoodEntry({ variables: { entryId: props.record.id } })
-      }
+      },
     })
   }
 
@@ -50,15 +50,15 @@ const extraColumns: ColumnsType<FoodEntry | {}> = [
   {
     title: 'Owner',
     dataIndex: ['owner', 'name'],
-    key: 'owner'
+    key: 'owner',
   },
   {
     title: 'Actions',
     key: 'actions',
     render: (text, record, index) => {
       return <ActionButtons text={text} record={record as FoodEntry} index={index} />
-    }
-  }
+    },
+  },
 ]
 
 export const AdminEntries = () => {
@@ -69,7 +69,7 @@ export const AdminEntries = () => {
     from: tableFilterState.from,
     to: tableFilterState.to,
     limit: tableFilterState.limit,
-    offset: tableFilterState.offset
+    offset: tableFilterState.offset,
   })
 
   const handleTableStateChange = (state: TableFilterState) => setTableFilterState(state)

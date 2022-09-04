@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node-dev src/server.ts",
     "test": "jest --config ./jest.config.json",
-    "lint": "eslint --fix src/**/*.ts"
+    "lint": "eslint --fix src/**/*.ts",
+    "format": "prettier src/**/*.ts --write . --config ./.prettierrc"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "graphql": "^15.8.0",
     "jsonwebtoken": "^8.5.1",
     "lodash.isnil": "^4.0.0",
+    "prettier": "^2.7.1",
     "ts-node-dev": "^2.0.0"
   },
   "devDependencies": {

@@ -29,7 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --fix src/**/*.ts{,?}",
-    "format": "prettier src/**/*.tsx --write. --config ./.prettierrc"
+    "format": "prettier src/**/*.ts{,?} --write . --config ./.prettierrc"
   },
   "eslintConfig": {
     "extends": [

@@ -35,14 +35,14 @@ export const CalorieCalendar = () => {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const [caloriesByDay, setCaloriesByDay] = useState<Record<string, number>>({})
 
-  const [currentMonth, setCurrentMonth] = useState<{ from: dayjs.Dayjs, to: dayjs.Dayjs }>({
+  const [currentMonth, setCurrentMonth] = useState<{ from: dayjs.Dayjs; to: dayjs.Dayjs }>({
     from: dayjs().utc().tz(timezone).startOf('month'),
-    to: dayjs().utc().tz(timezone).endOf('month')
+    to: dayjs().utc().tz(timezone).endOf('month'),
   })
 
   const getUserCaloriesByDay = useGetUserCaloriesByDay({
     ...currentMonth,
-    timezone
+    timezone,
   })
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const CalorieCalendar = () => {
           acc[date] = calories
           return acc
         },
-        {}
+        {},
       )
 
       setCaloriesByDay(caloriesByDay)
@@ -62,7 +62,7 @@ export const CalorieCalendar = () => {
   const onCalendarChange = (date: dayjs.Dayjs) => {
     setCurrentMonth({
       from: date.utc(true).startOf('month'),
-      to: date.utc(true).endOf('month')
+      to: date.utc(true).endOf('month'),
     })
   }
 

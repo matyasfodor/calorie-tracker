@@ -1,5 +1,4 @@
-
 export type CaloriesPerDay = {
-  date: string;
-  calories: number;
+  date: string
+  calories: number
 }[]

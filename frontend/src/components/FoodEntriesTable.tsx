@@ -29,11 +29,11 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
   const handleFilterChange = (value: RangeValue<dayjs.Dayjs>) => {
     const update: Partial<TableFilterState> = {
       from: value?.[0] ?? null,
-      to: value?.[1] ?? null
+      to: value?.[1] ?? null,
     }
     props.onTableStateChange({
       ...props.tableState,
-      ...update
+      ...update,
     })
   }
 
@@ -46,33 +46,33 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         <div>
           <RangePicker value={[props.tableState.from ?? null, props.tableState.to ?? null]} onChange={handleFilterChange} />
         </div>
-      )
+      ),
     },
     {
       title: 'Name',
       dataIndex: 'name',
-      key: 'name'
+      key: 'name',
     },
     {
       title: 'Calorie Value',
       dataIndex: 'calorieValue',
-      key: 'calorieValue'
+      key: 'calorieValue',
     },
     {
       title: 'Is cheat meal',
       key: 'cheatMeal',
       render: (_, record) => {
         return <CheatMealRenderer entry={record as FoodEntry} />
-      }
+      },
     },
-    ...(props.extraColumns ?? [])
+    ...(props.extraColumns ?? []),
   ]
 
   const handlePaginationChange = (page: number, pageSize: number) => {
     props.onTableStateChange({
       ...props.tableState,
       limit: pageSize,
-      offset: (page - 1) * pageSize
+      offset: (page - 1) * pageSize,
     })
   }
 
@@ -87,7 +87,7 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         pagination={{
           current: (props.tableState.offset ?? 0 / 10) + 1,
           total: props.total,
-          onChange: handlePaginationChange
+          onChange: handlePaginationChange,
         }}
       />
     </>

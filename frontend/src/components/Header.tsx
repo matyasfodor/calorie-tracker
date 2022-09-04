@@ -36,7 +36,7 @@ export const Header = () => {
   const children: ItemType[] = data.users.map((user) => ({
     key: user.id,
     onClick: () => handleUserSelect(user),
-    label: user.name
+    label: user.name,
   }))
 
   return (
@@ -54,8 +54,8 @@ export const Header = () => {
                 <DownOutlined />
               </>
             ),
-            children
-          }
+            children,
+          },
         ]}
       />
     </StyledAntHeader>

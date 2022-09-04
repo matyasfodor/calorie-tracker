@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server'
 
 export const typeDefs = gql`
   directive @fieldAuth(requires: Role = ADMIN) on FIELD_DEFINITION
@@ -41,8 +41,10 @@ export const typeDefs = gql`
   }
 
   type Query {
-    """Lists all users. Normally this endpoint would be guarded by @auth(requires: ADMIN),
-    but this resolver populates the user selector in the client"""
+    """
+    Lists all users. Normally this endpoint would be guarded by @auth(requires: ADMIN),
+    but this resolver populates the user selector in the client
+    """
     users: [User!]!
     self: User!
     entries(ownerId: Int, from: Date, to: Date): EntriesResponse @auth(requires: ADMIN)
@@ -66,4 +68,4 @@ export const typeDefs = gql`
     updateEntry(entry: CreateOrUpdateEntry!, entryId: Int!): Entry @auth(requires: ADMIN)
     deleteEntry(entryId: Int!): Boolean @auth(requires: ADMIN)
   }
-`;
+`

@@ -7,7 +7,10 @@ import { ContextType } from '../context'
 
 // Inspired from https://www.graphql-tools.com/docs/schema-directives#enforcing-access-permissions
 
-function getAuthDirective (directiveName: string): { authDirectiveTypeDefs: string, authDirectiveTransformer: (schema: GraphQLSchema) => GraphQLSchema } {
+function getAuthDirective(directiveName: string): {
+  authDirectiveTypeDefs: string
+  authDirectiveTransformer: (schema: GraphQLSchema) => GraphQLSchema
+} {
   const typeDirectiveArgumentMaps: Record<string, any> = {}
   return {
     authDirectiveTypeDefs: `directive @${directiveName}(
@@ -22,7 +25,7 @@ function getAuthDirective (directiveName: string): { authDirectiveTypeDefs: stri
     }`,
     authDirectiveTransformer: (schema: GraphQLSchema) =>
       mapSchema(schema, {
-        [MapperKind.TYPE]: type => {
+        [MapperKind.TYPE]: (type) => {
           const authDirective = getDirective(schema, type, directiveName)?.[0]
           if (authDirective != null) {
             typeDirectiveArgumentMaps[type.name] = authDirective
@@ -30,7 +33,7 @@ function getAuthDirective (directiveName: string): { authDirectiveTypeDefs: stri
           return undefined
         },
         [MapperKind.OBJECT_FIELD]: (fieldConfig, _fieldName, typeName) => {
-          const authDirective: {requires?: string} | null =
+          const authDirective: { requires?: string } | null =
             getDirective(schema, fieldConfig, directiveName)?.[0] ?? typeDirectiveArgumentMaps[typeName]
 
           if (authDirective != null) {
@@ -50,8 +53,8 @@ function getAuthDirective (directiveName: string): { authDirectiveTypeDefs: stri
               return fieldConfig
             }
           }
-        }
-      })
+        },
+      }),
   }
 }
 
