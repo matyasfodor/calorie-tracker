@@ -3,8 +3,13 @@ import { useEffect, useState } from "react";
 import { useGetUserCaloriesByDay } from "../apollo/queries";
 import Calendar from "../components/Calendar";
 
+type CellRendererProps = {
+  date: dayjs.Dayjs;
+  caloriesByDay: Record<string, number>,
+  calorieLimit: number,
+};
 
-const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDay: Record<string, number> }) => {
+const CellRenderer = ({ date, caloriesByDay, calorieLimit }: CellRendererProps) => {
   const calendarDate = date.format('YYYY-MM-DD');
   const calories = (caloriesByDay[calendarDate]) || 0;
   const dayOfMonth = date.date();
@@ -12,7 +17,7 @@ const CellRenderer = ({ date, caloriesByDay }: { date: dayjs.Dayjs; caloriesByDa
   let color = '';
   if (calories === 0) {
     color = '#FFFFFF';
-  } else if (calories < 2100) {
+  } else if (calories < calorieLimit) {
     color = '#00FF00';
   } else {
     color = '#FF0000';
@@ -66,7 +71,7 @@ export const CalorieCalendar = () => {
       <Calendar
         fullscreen={false}
         dateFullCellRender={(date: dayjs.Dayjs) =>
-          <CellRenderer date={date} caloriesByDay={caloriesByDay} />}
+          <CellRenderer date={date} caloriesByDay={caloriesByDay} calorieLimit={getUserCaloriesByDay.data?.self.profile.calorieLimit ?? 2100} />}
         onPanelChange={onCalendarChange}
       />
     </div>

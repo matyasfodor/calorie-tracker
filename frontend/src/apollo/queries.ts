@@ -66,6 +66,9 @@ export const useGetEntryCount = (variables = {}) => useQuery<{ entries: { count:
 const GET_USER_CALORIES_BY_DAY = gql`
   query getUserCaloriesByDay($from: Date, $to: Date, $timezone: String) {
     self {
+      profile {
+        calorieLimit
+      }
       entries(from: $from, to: $to) {
         caloriesPerDay(timezone: $timezone) {
           calories
@@ -76,7 +79,7 @@ const GET_USER_CALORIES_BY_DAY = gql`
   }
 `;
 
-export const useGetUserCaloriesByDay = (variables = {}) => useQuery<{ self: { entries: { caloriesPerDay: { calories: number, date: string }[] } } }>(GET_USER_CALORIES_BY_DAY, { variables });
+export const useGetUserCaloriesByDay = (variables = {}) => useQuery<{ self: { profile: { calorieLimit: number }, entries: { caloriesPerDay: { calories: number, date: string }[] } } }>(GET_USER_CALORIES_BY_DAY, { variables });
 
 const GET_ALL_USER_CALORIES_BY_DAY = gql`
   query getAllUserCaloriesByDay($from: Date, $to: Date) {
