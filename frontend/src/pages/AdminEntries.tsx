@@ -23,7 +23,7 @@ const ActionButtons = (props: ActionButtonsProps) => {
       icon: <ExclamationCircleOutlined />,
       content: `Are you sure you want to delete "${props.record.name}"?`,
       onOk: async () => {
-        await deleteFoodEntry({variables: {entryId: props.record.id}});
+        await deleteFoodEntry({ variables: { entryId: props.record.id } });
       }
     });
   };
@@ -34,11 +34,11 @@ const ActionButtons = (props: ActionButtonsProps) => {
         title="Edit food entry"
         okText="Save"
         loading={updateFoodEntryState.loading}
-        buttonRenderer={({showModal}) => <Button icon={<EditOutlined/>} onClick={showModal}/>}
-        onSubmit={async (entry: FoodEntryWithoutId) => {await updateFoodEntry({variables: {entry, entryId: props.record.id}})}}
+        buttonRenderer={({ showModal }) => <Button icon={<EditOutlined />} onClick={showModal} />}
+        onSubmit={async (entry: FoodEntryWithoutId) => { await updateFoodEntry({ variables: { entry, entryId: props.record.id } }) }}
         entry={props.record}
       />
-      <Button icon={<DeleteOutlined/>} onClick={confirm}/>
+      <Button icon={<DeleteOutlined />} onClick={confirm} />
     </div>);
 }
 
@@ -50,13 +50,13 @@ const extraColumns: ColumnsType<FoodEntry | {}> = [{
   title: 'Actions',
   key: 'actions',
   render: (text, record, index) => {
-    return (<ActionButtons text={text} record={record as FoodEntry} index={index}/>)
+    return (<ActionButtons text={text} record={record as FoodEntry} index={index} />)
   }
 }
 ];
 
 export const AdminEntries = () => {
-  const [tableFilterState, setTableFilterState] = useState<TableFilterState>({limit: 10});
+  const [tableFilterState, setTableFilterState] = useState<TableFilterState>({ limit: 10 });
 
   // TODO refetch can probably be used to refetch data as needed.
   const { loading, error, data } = useGetAllEntries({
@@ -70,19 +70,26 @@ export const AdminEntries = () => {
 
   const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
 
-  // TODO allow assigning entries to any user
-  const handleCreateFoodEntry = (entry: FoodEntryWithoutId) => {
-    createFoodEntry({ variables: { entry } });
-  }
+  const footerRender = () =>
+    <EntryModal
+      title="Create food entry"
+      okText="Create"
+      allowOwner
+      loading={createFoodEntryState.loading}
+      buttonRenderer={({ showModal }) => <Button onClick={showModal}>Add Entry</Button>}
+      onSubmit={(entry) => {
+        const {ownerId, ...entryWithoutOwner} = entry;
+        createFoodEntry({ variables: { entry: entryWithoutOwner, ownerId } });
+      }}
+    />
 
   return <FoodEntriesTable
     dataSource={data?.entries.items ?? []}
     total={data?.entries.count ?? 0}
     dataLoading={loading}
     tableState={tableFilterState}
-    createLoading={createFoodEntryState.loading}
     onTableStateChange={handleTableStateChange}
-    createFoodEntry={handleCreateFoodEntry}
     extraColumns={extraColumns}
+    footerRenderer={footerRender}
   />
 }

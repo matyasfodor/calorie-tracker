@@ -1,11 +1,10 @@
-import { Button } from "antd";
 import Table, { ColumnsType } from "antd/lib/table";
 import dayjs from "dayjs";
-import { FoodEntry, FoodEntryWithoutId } from "../common/types";
+import { FoodEntry } from "../common/types";
 import { CheatMealRenderer } from "./CheatMealCheckbox";
 import DatePicker from "./DatePicker";
-import { EntryModal } from "./EntryModal";
 import { RangeValue } from "rc-picker/lib/interface";
+import { ReactNode } from "react";
 
 export type TableFilterState = {
   from?: dayjs.Dayjs | null,
@@ -20,9 +19,8 @@ type Props<T extends object> = {
   dataLoading: boolean,
   tableState: TableFilterState,
   onTableStateChange: (values: TableFilterState) => void
-  createLoading: boolean,
-  createFoodEntry: (entry: FoodEntryWithoutId) => void;
   extraColumns?: ColumnsType<T | {}>;
+  footerRenderer: () => ReactNode;
 }
 
 const { RangePicker } = DatePicker;
@@ -80,14 +78,7 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         dataSource={props.dataSource}
         loading={props.dataLoading}
         columns={columns}
-        footer={() =>
-          <EntryModal
-            title="Create food entry"
-            okText="Create"
-            loading={props.createLoading}
-            buttonRenderer={({ showModal }) => <Button onClick={showModal}>Add Entry</Button>}
-            onSubmit={(entry) => { props.createFoodEntry(entry) }}
-          />}
+        footer={props.footerRenderer}
         pagination={{
           current: (props.tableState.offset ?? 0 / 10) + 1,
           total: props.total,

@@ -2,8 +2,8 @@ import { gql, useMutation } from "@apollo/client";
 import { FoodEntryWithoutId } from "../common/types";
 
 const CREATE_FOOD_ENTRY = gql`
-  mutation CreateEntry($entry: CreateOrUpdateEntry!) {
-    createEntry(entry: $entry) {
+  mutation createEntry($entry: CreateOrUpdateEntry!, $ownerId: Int) {
+    createEntry(entry: $entry, ownerId: $ownerId) {
       name
       id
       calorieValue

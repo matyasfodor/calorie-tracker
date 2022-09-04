@@ -11,6 +11,7 @@ export type FoodEntry = {
   calorieValue: number;
   cheatMeal: boolean;
   timestamp: string;
+  ownerId?: number;
 }
 
 export type FoodEntryWithoutId = Omit<FoodEntry, 'id'>;

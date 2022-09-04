@@ -20,6 +20,7 @@ type EntryModalProps = {
   title: string;
   entry?: FoodEntry;
   okText: string;
+  allowOwner?: boolean
   loading?: boolean;
   buttonRenderer: ({ showModal }: { showModal: () => void; }) => ReactNode;
   onSubmit: (data: FoodEntryWithoutId) => void | Promise<void>;
@@ -34,7 +35,7 @@ export const EntryModal = (props: EntryModalProps) => {
   if (props.entry) {
     // form.setFields([{name: 'asdasname', value: 'asdas'}]);
     // Object.entries(props.entry)
-    const {timestamp, ...restEntry} = props.entry;
+    const { timestamp, ...restEntry } = props.entry;
     initialValues = {
       ...restEntry,
       timestampDate: dayjs(timestamp),
@@ -83,7 +84,7 @@ export const EntryModal = (props: EntryModalProps) => {
 
   return (
     <>
-      {props.buttonRenderer({showModal,})}
+      {props.buttonRenderer({ showModal, })}
 
       <Modal
         title={props.title}
@@ -104,14 +105,14 @@ export const EntryModal = (props: EntryModalProps) => {
             name="timestampDate"
             rules={[{ required: true, message: 'Please select the date the meal was eaten' }]}
           >
-            <DatePicker/>
+            <DatePicker />
           </Form.Item>
           <Form.Item
             label="Time"
             name="timestampTime"
             rules={[{ required: true, message: 'Please select the time the meal was eaten' }]}
           >
-            <TimePicker/>
+            <TimePicker />
           </Form.Item>
           <Form.Item
             label="Name"
@@ -134,6 +135,16 @@ export const EntryModal = (props: EntryModalProps) => {
           >
             <Checkbox />
           </Form.Item>
+          {props.allowOwner && (
+            <Form.Item
+              label="Owner"
+              name="ownerId"
+              rules={[{ required: true, message: 'Please set the ownerId' }]}
+            >
+              <InputNumber min={0} controls={false} />
+            </Form.Item>
+          )}
+
         </Form>
       </Modal>
     </>

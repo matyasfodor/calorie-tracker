@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useCreateFoodEntry } from "../apollo/mutations";
 import { useGetUserFoodEntries } from "../apollo/queries";
-import { FoodEntryWithoutId } from "../common/types";
 import { FoodEntriesTable, TableFilterState } from "../components/FoodEntriesTable";
 import { CalorieCalendar } from "../components/CalorieCalendar";
+import { EntryModal } from "../components/EntryModal";
+import { Button } from "antd";
 
 
 const UserFoodEntriesTable = () => {
@@ -20,13 +21,22 @@ const UserFoodEntriesTable = () => {
 
   const [createFoodEntry, createFoodEntryState] = useCreateFoodEntry();
 
-  const handleCreateFoodEntry = (entry: FoodEntryWithoutId) => {
-    createFoodEntry({ variables: { entry } });
-  }
 
   if (!getEntries.data || getEntries.error) {
     return (<span>Error :( {getEntries.error?.message}</span>);
   }
+
+  const footerRender = () =>
+    <EntryModal
+      title="Create food entry"
+      okText="Create"
+      loading={createFoodEntryState.loading}
+      buttonRenderer={({ showModal }) => <Button onClick={showModal}>Add Entry</Button>}
+      onSubmit={(entry) => { 
+        // TODO allow assigning entries to any user
+        createFoodEntry({ variables: { entry } });
+      }}
+    />
 
   return (
     <FoodEntriesTable
@@ -34,9 +44,8 @@ const UserFoodEntriesTable = () => {
       total={getEntries.data.self.entries.count}
       dataLoading={getEntries.loading}
       tableState={tableFilterState}
-      createLoading={createFoodEntryState.loading}
       onTableStateChange={handleTableStateChange}
-      createFoodEntry={handleCreateFoodEntry}
+      footerRenderer={footerRender}
     />
   )
 }
