@@ -25,11 +25,11 @@ export const getResolvers = (prisma: PrismaClient) => ({
       }
       return await prisma.entry.create({ data: { ...entry, ownerId: (ownerId ?? context.user?.id) as number } });
     },
-    // setCheatMeal(entryId: Int, cheatMeal: Boolean): Entry @auth(requires: USER)
 
+    // setCheatMeal(entryId: Int, cheatMeal: Boolean): Entry @auth(requires: USER)
     setCheatMeal: async (_: unknown, { entryId, cheatMeal }: { entryId: number, cheatMeal: boolean }, context: ContextType): Promise<Entry> => {
       const entry = await prisma.entry.findUnique({ where: { id: entryId } });
-      if (entry?.ownerId !== context.user?.id) {
+      if (!context.user?.isAdmin || entry?.ownerId !== context.user?.id) {
         throw new AuthenticationError(`Food entry with id ${entryId} does not exists`);
       }
       const updatedEntry = await prisma.entry.update({ where: { id: entryId }, data: { cheatMeal } });
@@ -43,7 +43,6 @@ export const getResolvers = (prisma: PrismaClient) => ({
     },
     // deleteEntry(entryId: Int!): Boolean @auth(requires: ADMIN)
     deleteEntry: async (_: unknown, { entryId }: { entryId: number }): Promise<boolean> => {
-      // TODO verify this works
       try {
         const resp = await prisma.entry.delete({ where: { id: entryId } });
         return true
@@ -52,20 +51,6 @@ export const getResolvers = (prisma: PrismaClient) => ({
         return false
       }
     },
-
-    // createOrUpdateEntry: async (_: unknown, { entry, ownerId }: { entry: Entry, ownerId?: number }, context: ContextType): Promise<Entry> => {
-    //   if (!isNil(ownerId)) {
-    //     if (!context.isAdmin) {
-    //       throw new AuthenticationError(`User cannot modify other users's records`)
-    //     }
-    //   }
-    //   // TODO validate that the record belongs to the user
-    //   if (entry.id !== undefined) {
-    //     return await prisma.entry.update({ where: { id: entry.id }, data: entry })
-    //   } else {
-    //     return await prisma.entry.create({ data: { ...entry, ownerId: (ownerId ?? context.user?.id) as number } })
-    //   }
-    // }
   },
 
   Query: {
@@ -73,8 +58,8 @@ export const getResolvers = (prisma: PrismaClient) => ({
       return prisma.user.findMany();
     },
     entries: async (_: unknown, args: {}) => { return args },
-    self: () => {
-      return {};
+    self: (_: unknown, {}: {}, context: ContextType) => {
+      return context.user;
     },
   },
 
@@ -86,7 +71,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
       return prisma.profile.findUnique({ where: { userId: user.id } })
     },
     entries: async (user: User, { from, to, limit, offset }: { from: Date, to: Date, limit: number, offset: number }) => {
-      return getEntries({ prisma }, { ownerId: user.id, from, to, limit, offset });
+      return { ownerId: user.id, from, to, limit, offset };
     },
     caloriesPerDay: async (user: User, { from, to }: { from: Date, to: Date }): Promise<CaloriesPerDay> => {
       const entries = await getEntries({ prisma }, { ownerId: user?.id, from, to });

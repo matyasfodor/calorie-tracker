@@ -1,12 +1,15 @@
 import { Button, Spin, Table } from "antd";
 import type { ColumnsType } from "antd/lib/table/interface";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+
 import { useEffect, useState } from "react";
 import { useCreateFoodEntry } from "../apollo/mutations";
 import { useGetUserCaloriesByDay, useGetUserFoodEntries } from "../apollo/queries";
 import { FoodEntry } from "../common/types";
 import Calendar from "../components/Calendar";
+import { CheatMealRenderer } from "../components/CheatMealCheckbox";
 import { EntryModal } from "../components/EntryModal";
+
 
 const columns: ColumnsType<FoodEntry | {}> = [{
     title: 'Name',
@@ -18,8 +21,10 @@ const columns: ColumnsType<FoodEntry | {}> = [{
     key: 'calorieValue'
   }, {
     title: 'Is cheat meal',
-    dataIndex: 'cheatMeal',
-    key: 'cheatMeal'
+    key: 'cheatMeal',
+    render: (text, record, index) => {
+        return <CheatMealRenderer entry={(record as FoodEntry)}/>
+    },
   }, {
     title: 'Date',
     dataIndex: 'timestamp',

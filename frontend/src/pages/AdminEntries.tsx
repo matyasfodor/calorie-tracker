@@ -5,6 +5,7 @@ import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-de
 import { EntryModal } from "../components/EntryModal";
 import { useDeleteFoodEntry, useUpdateFoodEntry } from "../apollo/mutations";
 import { useGetAllEntries } from "../apollo/queries";
+import { CheatMealRenderer } from "../components/CheatMealCheckbox";
 
 type ActionButtonsProps = {
   text: string, record: FoodEntry, index: number
@@ -49,8 +50,10 @@ const columns: ColumnsType<FoodEntry | {}> = [{
   key: 'calorieValue'
 }, {
   title: 'Is cheat meal',
-  dataIndex: 'cheatMeal',
-  key: 'cheatMeal'
+  key: 'cheatMeal',
+  render: (text, record, index) => {
+    return <CheatMealRenderer entry={(record as FoodEntry)}/>
+},
 }, {
   title: 'Date',
   dataIndex: 'timestamp',

@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { FoodEntry, FoodEntryWithoutId } from "../common/types";
+import { FoodEntryWithoutId } from "../common/types";
 
 const CREATE_FOOD_ENTRY = gql`
   mutation CreateEntry($entry: CreateOrUpdateEntry!) {
@@ -34,3 +34,15 @@ const DELETE_FOOD_ENTRY = gql`
 `;
 
 export const useDeleteFoodEntry = () => useMutation<boolean>(DELETE_FOOD_ENTRY);
+
+const SET_CHEAT_MEAL = gql`
+  mutation setCheatMeal($entryId: Int, $cheatMeal: Boolean) {
+    setCheatMeal(entryId: $entryId, cheatMeal: $cheatMeal) {
+      id
+      name
+      cheatMeal
+    }
+  }
+`;
+
+export const useSetCheatMeal = () => useMutation<boolean>(SET_CHEAT_MEAL);
