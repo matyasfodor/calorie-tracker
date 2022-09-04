@@ -8,7 +8,6 @@ import { FoodEntry } from '../common/types'
 import { CheatMealRenderer } from './CheatMealCheckbox'
 import DatePicker from './DatePicker'
 
-
 export interface TableFilterState {
   from?: dayjs.Dayjs | null
   to?: dayjs.Dayjs | null
