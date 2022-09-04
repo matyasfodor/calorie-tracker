@@ -13,7 +13,7 @@ const getUserFromJwt = (token: string): User | null => {
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const AuthContextProvider: React.FC<PropsWithChildren & {onAuthChange: () => void}> = ({ children, onAuthChange }) => {
 
   const token = localStorage.getItem(LOCAL_STORAGE__AUTH);
 
@@ -24,6 +24,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     } else {
       localStorage.removeItem(LOCAL_STORAGE__AUTH);
     }
+    onAuthChange();
   
     setUserState(user);
   }
