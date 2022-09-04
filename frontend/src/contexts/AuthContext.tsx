@@ -33,9 +33,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren & { onAuthChange: (
   const providerValue = useMemo(
     () => ({
       user,
-      setUser,
+      setUser
     }),
-    [user],
+    [user]
   )
 
   return <AuthContext.Provider value={providerValue}>{children}</AuthContext.Provider>

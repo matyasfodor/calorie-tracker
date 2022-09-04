@@ -13,7 +13,7 @@ const UserFoodEntriesTable = () => {
     from: tableFilterState.from,
     to: tableFilterState.to,
     limit: tableFilterState.limit,
-    offset: tableFilterState.offset,
+    offset: tableFilterState.offset
   })
 
   const handleTableStateChange = (state: TableFilterState) => setTableFilterState(state)

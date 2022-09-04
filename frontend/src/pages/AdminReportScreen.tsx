@@ -4,33 +4,33 @@ import dayjs from 'dayjs'
 import { useGetAllUserCaloriesByDay, useGetEntryCount } from '../apollo/queries'
 
 // TODO extract into it's own function
-const columns: ColumnsType<{ id: string; name: string; entries: { sumCalories: number } }> = [
+const columns: ColumnsType<{ id: string, name: string, entries: { sumCalories: number } }> = [
   {
     title: 'Name',
     dataIndex: 'name',
-    key: 'name',
+    key: 'name'
   },
   {
     title: 'Calories last week',
     key: 'calories',
-    dataIndex: ['entries', 'sumCalories'],
-  },
+    dataIndex: ['entries', 'sumCalories']
+  }
 ]
 
 export const AdminReportScreen = () => {
   const getEntryCountPastWeek = useGetEntryCount({
     from: dayjs().subtract(7, 'days').startOf('day'),
-    to: dayjs().endOf('day'),
+    to: dayjs().endOf('day')
   })
 
   const getEntryCountPreviousWeek = useGetEntryCount({
     from: dayjs().subtract(14, 'days').startOf('day'),
-    to: dayjs().subtract(7, 'days').endOf('day'),
+    to: dayjs().subtract(7, 'days').endOf('day')
   })
 
   const getAllUserCaloriesByDay = useGetAllUserCaloriesByDay({
     from: dayjs().subtract(7, 'days').startOf('day'),
-    to: dayjs().endOf('day'),
+    to: dayjs().endOf('day')
   })
 
   return (

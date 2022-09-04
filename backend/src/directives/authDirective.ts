@@ -44,7 +44,7 @@ function getAuthDirective(directiveName: string): {
               fieldConfig.resolve = function (source, args, context: ContextType, info) {
                 if (requires !== 'UNKNOWN' && context?.user === null) {
                   throw new AuthenticationError(`User should be authenticated to access field ${fieldConfig.astNode?.name.value ?? ''}`)
-                } else if (requires === 'ADMIN' && (context?.isAdmin ?? false)) {
+                } else if (requires === 'ADMIN' && !(context?.isAdmin ?? false)) {
                   throw new AuthenticationError(`User is not authorized to access field ${fieldConfig.astNode?.name.value ?? ''}`)
                 }
 

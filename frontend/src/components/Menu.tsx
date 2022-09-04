@@ -4,17 +4,17 @@ import { useContext } from 'react'
 import { Link, matchRoutes, useLocation } from 'react-router-dom'
 import { AuthContext, AuthContextType } from '../contexts/AuthContext'
 
-function getItem(component: React.ReactNode, key: React.Key): MenuItemType {
+function getItem (component: React.ReactNode, key: React.Key): MenuItemType {
   return {
     label: component,
-    key,
+    key
   }
 }
 
 const getRoutes = (isAdmin: boolean) => {
   const adminRoutes = [
     { path: '/admin-entries', title: '[Admin] Food Entries' },
-    { path: '/admin-report', title: '[Admin] Report' },
+    { path: '/admin-report', title: '[Admin] Report' }
   ]
 
   return [{ path: '/', title: 'Home' }, { path: '/food-entries', title: 'My Food Entries' }, ...(isAdmin ? adminRoutes : [])]

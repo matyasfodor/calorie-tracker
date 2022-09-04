@@ -37,12 +37,12 @@ export const EntryModal = (props: EntryModalProps) => {
     initialValues = {
       ...restEntry,
       timestampDate: dayjs(timestamp),
-      timestampTime: dayjs(timestamp),
+      timestampTime: dayjs(timestamp)
     }
   } else {
     initialValues = {
       timestampDate: dayjs(),
-      timestampTime: dayjs(),
+      timestampTime: dayjs()
     }
   }
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -61,14 +61,14 @@ export const EntryModal = (props: EntryModalProps) => {
           timestampDate.date(),
           timestampTime.hour(),
           timestampTime.minute(),
-          timestampTime.second(),
-        ),
+          timestampTime.second()
+        )
       )
         .utc(true)
         .format()
       const foodEntry = {
         timestamp,
-        ...restValues,
+        ...restValues
       }
       await props.onSubmit(foodEntry)
       form.resetFields()
@@ -113,11 +113,13 @@ export const EntryModal = (props: EntryModalProps) => {
           <Form.Item label='Cheat meal' name='cheatMeal' valuePropName='checked'>
             <Checkbox />
           </Form.Item>
-          {props?.allowOwner ?? false ? (
+          {props?.allowOwner ?? false
+            ? (
             <Form.Item label='Owner' name='ownerId' rules={[{ required: true, message: 'Please set the ownerId' }]}>
               <InputNumber min={0} controls={false} />
             </Form.Item>
-          ) : null}
+              )
+            : null}
         </Form>
       </Modal>
     </>
