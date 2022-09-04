@@ -76,6 +76,7 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
     <>
       <Table
         dataSource={props.dataSource}
+        rowKey="id"
         loading={props.dataLoading}
         columns={columns}
         footer={props.footerRenderer}

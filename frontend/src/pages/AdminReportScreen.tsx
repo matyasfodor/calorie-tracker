@@ -37,6 +37,10 @@ export const AdminReportScreen = () => {
     <h2>Admin report</h2>
     <p>Food Entries added in the last 7 days: ({getEntryCountPastWeek.data?.entries?.count})</p>
     <p>Food Entries added in the 7 days before: ({getEntryCountPreviousWeek.data?.entries?.count})</p>
-    <Table columns={columns} dataSource={getAllUserCaloriesByDay.data?.users}/>
+    <Table 
+      columns={columns}
+      rowKey="id"
+      dataSource={getAllUserCaloriesByDay.data?.users}
+    />
   </div>)
 }
