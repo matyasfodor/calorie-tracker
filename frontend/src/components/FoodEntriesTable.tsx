@@ -1,0 +1,96 @@
+import { Button } from "antd";
+import Table, { ColumnsType } from "antd/lib/table";
+import dayjs from "dayjs";
+import { FoodEntry, FoodEntryWithoutId } from "../common/types";
+import { CheatMealRenderer } from "./CheatMealCheckbox";
+import DatePicker from "./DatePicker";
+import { EntryModal } from "./EntryModal";
+import { RangeValue } from "rc-picker/lib/interface";
+
+export type TableFilterState = {
+  from?: dayjs.Dayjs | null,
+  to?: dayjs.Dayjs | null,
+  limit?: number | null,
+  offset?: number | null
+}
+
+type Props<T extends object> = {
+  dataSource: T[],
+  total: number,
+  dataLoading: boolean,
+  tableState: TableFilterState,
+  onTableStateChange: (values: TableFilterState) => void
+  createLoading: boolean,
+  createFoodEntry: (entry: FoodEntryWithoutId) => void;
+}
+
+const { RangePicker } = DatePicker;
+
+export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
+
+  const handleFilterChange = (value: RangeValue<dayjs.Dayjs>) => {
+    const update: Partial<TableFilterState> = {
+      from: value?.[0] ?? null,
+      to: value?.[1] ?? null,
+    };
+    props.onTableStateChange({
+      ...props.tableState,
+      ...update,
+    })
+  };
+
+  const columns: ColumnsType<T | {}> = [
+    {
+      title: 'Date',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      filterDropdown: () => <div>
+        <RangePicker value={[props.tableState.from ?? null, props.tableState.to ?? null]} onChange={handleFilterChange} />
+      </div>
+    }, {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name'
+    }, {
+      title: 'Calorie Value',
+      dataIndex: 'calorieValue',
+      key: 'calorieValue'
+    }, {
+      title: 'Is cheat meal',
+      key: 'cheatMeal',
+      render: (_, record) => {
+        return <CheatMealRenderer entry={(record as FoodEntry)} />
+      },
+    },
+  ];
+
+  const handlePaginationChange = (page: number, pageSize: number) => {
+    props.onTableStateChange({
+      ...props.tableState,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    })
+  }
+
+  return (
+    <>
+      <Table
+        dataSource={props.dataSource}
+        loading={props.dataLoading}
+        columns={columns}
+        footer={() =>
+          <EntryModal
+            title="Create food entry"
+            okText="Create"
+            loading={props.createLoading}
+            buttonRenderer={({ showModal }) => <Button onClick={showModal}>Add Entry</Button>}
+            onSubmit={(entry) => { props.createFoodEntry(entry) }}
+          />}
+        pagination={{
+          current: (props.tableState.offset ?? 0 / 10) + 1,
+          total: props.total,
+          onChange: handlePaginationChange,
+        }}
+      />
+    </>)
+};

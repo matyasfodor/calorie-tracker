@@ -16,7 +16,7 @@ export const typeDefs = gql`
 
   type EntriesResponse {
     # TODO push down limit offset for items
-    items: [Entry!]!
+    items(limit: Int, offset: Int): [Entry!]!
     count: Int!
     sumCalories: Int!
   }
@@ -37,7 +37,7 @@ export const typeDefs = gql`
     jwt: String!
     isAdmin: Boolean!
     profile: Profile!
-    entries(from: Date, to: Date, limit: Int, offset: Int): EntriesResponse!
+    entries(from: Date, to: Date): EntriesResponse!
     caloriesPerDay(from: Date, to: Date): [DailyCalorie!]!
   }
 
@@ -46,7 +46,7 @@ export const typeDefs = gql`
     but this resolver populates the user selector in the client"""
     users: [User!]!
     self: User!
-    entries(ownerId: Int, from: Date, to: Date, limit: Int, offset: Int): EntriesResponse @auth(requires: ADMIN)
+    entries(ownerId: Int, from: Date, to: Date): EntriesResponse @auth(requires: ADMIN)
   }
 
   input CreateOrUpdateEntry {

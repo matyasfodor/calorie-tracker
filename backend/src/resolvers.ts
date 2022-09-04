@@ -46,7 +46,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
       try {
         const resp = await prisma.entry.delete({ where: { id: entryId } });
         return true
-      } catch(error) {
+      } catch (error) {
         console.warn(error);
         return false
       }
@@ -58,7 +58,7 @@ export const getResolvers = (prisma: PrismaClient) => ({
       return prisma.user.findMany();
     },
     entries: async (_: unknown, args: {}) => { return args },
-    self: (_: unknown, {}: {}, context: ContextType) => {
+    self: (_: unknown, { }: {}, context: ContextType) => {
       return context.user;
     },
   },
@@ -96,13 +96,16 @@ export const getResolvers = (prisma: PrismaClient) => ({
 
   Entry: {
     owner: async (entry: Entry) => {
-      return prisma.user.findUnique({where:{id: entry.ownerId}});
+      return prisma.user.findUnique({ where: { id: entry.ownerId } });
     },
   },
 
   EntriesResponse: {
-    items: async (props: { ownerId?: number, from?: Date, to?: Date, limit?: number, offset?: number }) => {
-      return getEntries({ prisma }, props);
+    items: async (entriesProps: { ownerId?: number, from?: Date, to?: Date }, itemsProps: { limit?: number, offset?: number }) => {
+      return getEntries({ prisma }, {
+        ...entriesProps,
+        ...itemsProps,
+      });
     },
     count: async (props: { ownerId?: number, from?: Date, to?: Date }) => {
       return getEntryCount({ prisma }, props);
