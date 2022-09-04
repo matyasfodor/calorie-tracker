@@ -7,7 +7,7 @@ import { Menu } from './components/Menu'
 import { Header } from './components/Header'
 import { MainContent } from './pages/MainContent'
 
-function App () {
+function App() {
   return (
     <>
       <Layout>

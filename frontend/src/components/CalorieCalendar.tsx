@@ -29,9 +29,11 @@ const CellRenderer = ({ date, caloriesByDay, calorieLimit }: CellRendererProps) 
     color = '#ffccc7'
   }
 
-  return (<Tooltip title={`${calories}`}>
-    <div style={{ width: '100%', height: '100%', backgroundColor: color }}>{dayOfMonth}</div>
-  </Tooltip>)
+  return (
+    <Tooltip title={`${calories}`}>
+      <div style={{ width: '100%', height: '100%', backgroundColor: color }}>{dayOfMonth}</div>
+    </Tooltip>
+  )
 }
 
 export const CalorieCalendar = () => {

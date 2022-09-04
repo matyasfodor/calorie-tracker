@@ -1,4 +1,4 @@
-import { Button, Modal } from 'antd'
+import { Button, Modal, PageHeader } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
 import { FoodEntry, FoodEntryWithoutId } from '../common/types'
 import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
@@ -7,6 +7,7 @@ import { useCreateFoodEntry, useDeleteFoodEntry, useUpdateFoodEntry } from '../a
 import { useGetAllEntries } from '../apollo/queries'
 import { FoodEntriesTable, TableFilterState } from '../components/FoodEntriesTable'
 import { useState } from 'react'
+import { Panel } from '../components/Panel'
 
 interface ActionButtonsProps {
   text: string
@@ -91,14 +92,19 @@ export const AdminEntries = () => {
   )
 
   return (
-    <FoodEntriesTable
-      dataSource={data?.entries.items ?? []}
-      total={data?.entries.count ?? 0}
-      dataLoading={loading}
-      tableState={tableFilterState}
-      onTableStateChange={handleTableStateChange}
-      extraColumns={extraColumns}
-      footerRenderer={footerRender}
-    />
+    <>
+      <PageHeader title='All entries' />
+      <Panel maxWidth={1200}>
+        <FoodEntriesTable
+          dataSource={data?.entries.items ?? []}
+          total={data?.entries.count ?? 0}
+          dataLoading={loading}
+          tableState={tableFilterState}
+          onTableStateChange={handleTableStateChange}
+          extraColumns={extraColumns}
+          footerRenderer={footerRender}
+        />
+      </Panel>
+    </>
   )
 }

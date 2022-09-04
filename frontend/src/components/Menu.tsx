@@ -17,7 +17,11 @@ const getRoutes = (isAdmin: boolean) => {
     { path: '/admin-report', title: '[Admin] Report' }
   ]
 
-  return [{ path: '/', title: 'Home' }, { path: '/food-entries', title: 'My Food Entries' }, ...(isAdmin ? adminRoutes : [])]
+  return [
+    { path: '/food-entries', title: 'My Food Entries' },
+    { path: '/food-calendar', title: 'My Calorie Calendar' },
+    ...(isAdmin ? adminRoutes : [])
+  ]
 }
 
 export const Menu = () => {
@@ -36,5 +40,5 @@ export const Menu = () => {
 
   const currentPath = useCurrentPath()
 
-  return <AntMenu theme='dark' defaultSelectedKeys={[currentPath]} mode='inline' items={items} activeKey={currentPath} />
+  return <AntMenu theme='dark' selectedKeys={[currentPath]} mode='inline' items={items} activeKey={currentPath} />
 }

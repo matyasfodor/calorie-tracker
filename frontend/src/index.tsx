@@ -25,14 +25,13 @@ root.render(
         <AuthContextProvider
           onAuthChange={() => {
             void apolloClient.refetchQueries({
-              include: 'all'
+              include: 'all',
             })
-          }
-          }
+          }}
         >
           <App />
         </AuthContextProvider>
       </BrowserRouter>
     </ApolloProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 )

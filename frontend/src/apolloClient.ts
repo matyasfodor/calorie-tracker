@@ -14,8 +14,8 @@ const authLink = new ApolloLink((operation, forward) => {
   // Use the setContext method to set the HTTP headers.
   operation.setContext({
     headers: {
-      authorization: !isNil(token) ? `Bearer ${token}` : ''
-    }
+      authorization: !isNil(token) ? `Bearer ${token}` : '',
+    },
   })
 
   // Call the next link in the middleware chain.
@@ -27,11 +27,11 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache({
     typePolicies: {
       Entry: {
-        keyFields: ['id']
+        keyFields: ['id'],
       },
       User: {
-        keyFields: ['id']
-      }
-    }
-  })
+        keyFields: ['id'],
+      },
+    },
+  }),
 })

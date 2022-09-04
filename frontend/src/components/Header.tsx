@@ -26,7 +26,7 @@ const SyledMenu = styled(Menu)`
 `
 
 const SpacedText = styled.span`
-  margin-left: 1rem;;
+  margin-left: 1rem; ;
 `
 
 const PageTitle = styled.div`
@@ -56,11 +56,11 @@ export const Header = () => {
   return (
     <StyledAntHeader>
       <PageTitle>
-        <FontAwesomeIcon icon={faAppleWhole} size={'2x'}/>
+        <FontAwesomeIcon icon={faAppleWhole} size={'2x'} />
         <SpacedText>Calorie tracker</SpacedText>
-        </PageTitle>
+      </PageTitle>
       <SyledMenu
-        theme="dark"
+        theme='dark'
         mode='horizontal'
         triggerSubMenuAction='click'
         items={[

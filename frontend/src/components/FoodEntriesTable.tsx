@@ -50,9 +50,11 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         </div>
       ),
       render: (_, record) => {
-        return (<Tooltip title={`${dayjs((record as FoodEntry).timestamp).format('YYYY-MM-DD HH:MM:ss')}`}>
-          {dayjs((record as FoodEntry).timestamp).fromNow()}
-        </Tooltip>)
+        return (
+          <Tooltip title={`${dayjs((record as FoodEntry).timestamp).format('YYYY-MM-DD HH:MM:ss')}`}>
+            {dayjs((record as FoodEntry).timestamp).fromNow()}
+          </Tooltip>
+        )
       }
     },
     {

@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useCreateFoodEntry } from '../apollo/mutations'
 import { useGetUserFoodEntries } from '../apollo/queries'
 import { FoodEntriesTable, TableFilterState } from '../components/FoodEntriesTable'
-import { CalorieCalendar } from '../components/CalorieCalendar'
 import { EntryModal } from '../components/EntryModal'
-import { Button } from 'antd'
+import { Button, PageHeader } from 'antd'
+import { Panel } from '../components/Panel'
 
 const UserFoodEntriesTable = () => {
   const [tableFilterState, setTableFilterState] = useState<TableFilterState>({ limit: 10 })
@@ -51,9 +51,11 @@ const UserFoodEntriesTable = () => {
 
 export const UserFoodEntries = () => {
   return (
-    <div>
-      <CalorieCalendar />
-      <UserFoodEntriesTable />
-    </div>
+    <>
+      <PageHeader title='My Food Entries' />
+      <Panel>
+        <UserFoodEntriesTable />
+      </Panel>
+    </>
   )
 }
