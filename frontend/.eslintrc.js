@@ -21,5 +21,6 @@ module.exports = {
     'react/prop-types': 0,
     'react/react-in-jsx-scope': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/restrict-template-expressions': 0,
   },
 }

@@ -50,9 +50,12 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         </div>
       ),
       render: (_, record) => {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+        const localeTime = dayjs((record as FoodEntry).timestamp).utc().tz(timezone)
         return (
-          <Tooltip title={`${dayjs((record as FoodEntry).timestamp).format('YYYY-MM-DD HH:MM:ss')}`}>
-            {dayjs((record as FoodEntry).timestamp).fromNow()}
+          <Tooltip title={`${localeTime.format('YYYY-MM-DD HH:MM:ss')}`}>
+            {localeTime.fromNow()}
           </Tooltip>
         )
       }
@@ -65,7 +68,11 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
     {
       title: 'Calorie Value',
       dataIndex: 'calorieValue',
-      key: 'calorieValue'
+      key: 'calorieValue',
+      align: 'right',
+      render: (_, record) => {
+        return `${(record as FoodEntry).calorieValue.toFixed(2)} cal`
+      }
     },
     {
       title: 'Is cheat meal',
@@ -94,7 +101,7 @@ export const FoodEntriesTable = <T extends object>(props: Props<T>) => {
         columns={columns}
         footer={props.footerRenderer}
         pagination={{
-          current: (props.tableState.offset ?? 0 / 10) + 1,
+          current: ((props.tableState.offset ?? 0) / 10) + 1,
           total: props.total,
           onChange: handlePaginationChange
         }}

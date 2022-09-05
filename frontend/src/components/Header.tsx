@@ -57,7 +57,7 @@ export const Header = () => {
     <StyledAntHeader>
       <PageTitle>
         <FontAwesomeIcon icon={faAppleWhole} size={'2x'} />
-        <SpacedText>Calorie tracker</SpacedText>
+        <SpacedText>Calorie Tracker</SpacedText>
       </PageTitle>
       <SyledMenu
         theme='dark'

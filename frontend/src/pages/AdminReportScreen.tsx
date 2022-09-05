@@ -13,7 +13,11 @@ const columns: ColumnsType<{ id: string, name: string, entries: { sumCalories: n
   {
     title: 'Calories last week',
     key: 'calories',
-    dataIndex: ['entries', 'sumCalories']
+    align: 'right',
+    dataIndex: ['entries', 'sumCalories'],
+    render: (_, { entries: { sumCalories } }) => {
+      return `${((sumCalories as number) / 7).toFixed(2)} cal`;
+    }
   }
 ]
 
@@ -39,12 +43,14 @@ export const AdminReportScreen = () => {
 
       <Row>
         <Col>
-          <Panel title='Overall statistics' maxWidth={600}>
-            <Row gutter={16}>
-              <Col span={12}>
+          <Panel title='Overall statistics'>
+            <Row gutter={20}>
+              <Col span={14}>
                 <Statistic title='Food Entries added in the last 7 days' value={getEntryCountPastWeek.data?.entries?.count} />
               </Col>
-              <Col span={12}>
+            </Row>
+            <Row>
+              <Col span={14}>
                 <Statistic title='Food Entries added in the 7 days before' value={getEntryCountPreviousWeek.data?.entries?.count} />
               </Col>
             </Row>

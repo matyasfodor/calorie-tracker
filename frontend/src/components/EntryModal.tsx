@@ -64,7 +64,7 @@ export const EntryModal = (props: EntryModalProps) => {
           timestampTime.second()
         )
       )
-        .utc(true)
+        .utc()
         .format()
       const foodEntry = {
         timestamp,
