@@ -1,8 +1,9 @@
-import { User } from '@prisma/client'
+import { PrismaClient, User } from '@prisma/client'
 import type { ContextFunction } from 'apollo-server-core'
 import type { ExpressContext } from 'apollo-server-express'
 
 import jwt from 'jsonwebtoken'
+import { PrismaDataSource } from './prismaDataSource'
 
 const getUser = (authHeader: string): User | null => {
   if (authHeader.startsWith('Bearer ')) {
@@ -17,19 +18,31 @@ const getUser = (authHeader: string): User | null => {
 export type ContextType = {
   user?: User
   isAdmin?: boolean
-}
-
-export const context: ContextFunction<ExpressContext, object> = ({ req }): ContextType => {
-  const token = req.headers.authorization || ''
-
-  const user = getUser(token)
-
-  if (user === null) {
-    return {}
-  }
-
-  return {
-    user,
-    isAdmin: user.isAdmin,
+  datasources: {
+    prisma: PrismaDataSource
   }
 }
+
+export const getContext =
+  (prisma: PrismaClient): ContextFunction<ExpressContext, object> =>
+  ({ req }): ContextType => {
+    const token = req.headers.authorization || ''
+
+    const user = getUser(token)
+
+    const datasources = {
+      prisma: new PrismaDataSource(prisma),
+    }
+
+    if (user === null) {
+      return {
+        datasources,
+      }
+    }
+
+    return {
+      user,
+      isAdmin: user.isAdmin,
+      datasources,
+    }
+  }

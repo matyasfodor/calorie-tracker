@@ -7,7 +7,7 @@ import { ContextType } from '../context'
 
 // Inspired from https://www.graphql-tools.com/docs/schema-directives#enforcing-access-permissions
 
-function getAuthDirective(directiveName: string): {
+function getAuthDirective (directiveName: string): {
   authDirectiveTypeDefs: string
   authDirectiveTransformer: (schema: GraphQLSchema) => GraphQLSchema
 } {
@@ -53,8 +53,8 @@ function getAuthDirective(directiveName: string): {
               return fieldConfig
             }
           }
-        },
-      }),
+        }
+      })
   }
 }
 

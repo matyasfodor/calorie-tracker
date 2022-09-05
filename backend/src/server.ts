@@ -1,12 +1,12 @@
-import { PrismaClient, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { ApolloServer } from 'apollo-server'
-import { getResolvers } from './resolvers'
+import { resolvers } from './resolvers'
 import { typeDefs } from './schema'
 import dotenv from 'dotenv'
 
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { authDirective } from './directives/authDirective'
-import { context } from './context'
+import { getContext } from './context'
 import dayjs from 'dayjs'
 import dayjs_plugin_timezone from 'dayjs/plugin/timezone'
 import dayjs_plugin_utc from 'dayjs/plugin/utc'
@@ -14,7 +14,6 @@ import dayjs_plugin_utc from 'dayjs/plugin/utc'
 // Allows using .env file
 // These values then can be used as process.env[variablename]
 dotenv.config()
-
 const prisma = new PrismaClient()
 
 dayjs.extend(dayjs_plugin_utc)
@@ -25,13 +24,13 @@ const { authDirectiveTypeDefs, authDirectiveTransformer } = authDirective
 const schema = authDirectiveTransformer(
   makeExecutableSchema({
     typeDefs: [authDirectiveTypeDefs, typeDefs],
-    resolvers: getResolvers(prisma),
+    resolvers,
   }),
 )
 
 const server = new ApolloServer({
   schema,
-  context,
+  context: getContext(prisma),
 })
 
 server.listen().then(() => {
