@@ -80,7 +80,7 @@ export const resolvers = {
 
   Entry: {
     owner: async (entry: Entry, _: unknown, context: ContextType) => {
-      return context.datasources.prisma.prismaClient.user.findUnique({ where: { id: entry.ownerId } })
+      return context.datasources.prisma.getUsers.load(entry.ownerId);
     },
   },
 
@@ -90,7 +90,6 @@ export const resolvers = {
       entriesProps: { ownerId?: number; from?: Date; to?: Date },
       itemsProps: { limit?: number; offset?: number },
       context: ContextType,
-      ...rest
     ) => {
       return getEntries(
         { prisma: context.datasources.prisma.prismaClient },
